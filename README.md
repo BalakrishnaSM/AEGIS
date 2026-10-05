@@ -437,3 +437,10 @@ The evaluated deterministic build achieves:
 **23/23 exact official statuses with 0 critical and 0 major errors**, while the held-out evaluation achieves **24/40 exact statuses with 0 critical errors**.
 
 That result is reported without hiding the remaining generalization gap.
+<img width="1919" height="946" alt="Screenshot 2026-10-05 213611" src="https://github.com/user-attachments/assets/262a0b15-7de6-4ea7-9de9-e6eaebd074c8" />
+
+<img width="1916" height="962" alt="Screenshot 2026-10-05 220320" src="https://github.com/user-attachments/assets/3ad68540-94a1-4501-a8cd-8c2bbb1740c2" />
+<img width="1919" height="946" alt="Screenshot 2026-10-05 213611" src="https://github.com/user-attachments/assets/65553de1-c4dd-4aa8-8581-08f775839c97" />
+<img width="1919" height="946" alt="Screenshot 2026-10-05 213611" src="https://github.com/user-attachments/assets/568c6172-58f8-461c-bd3a-9bcd64374d3f" />
+
+
