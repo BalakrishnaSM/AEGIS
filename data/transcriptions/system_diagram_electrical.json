@@ -1,0 +1,35 @@
+{
+ "source": "diagrams/system_diagram_electrical.png",
+ "sha256": "cdca4f25cf2f29746816c18154b98c47763dca56927a0e27d776bbcb69d56381",
+ "reader": "assistant-transcription (unreviewed; VLM stand-in)",
+ "reviewed": false,
+ "regions": [
+  {
+   "id": "r1",
+   "text": "Aegis Series-7 HCS — Electrical Schematic (AEG-DWG-E02) Power distribution and interlock wiring"
+  },
+  {
+   "id": "r2",
+   "text": "MAIN DISCONNECT Q1 CONTROL XFMR T1 480:120V PLC-03 24VDC POWER SUPPLY PLC-03 I/O RACK E-STOP SAFETY RELAY KA1"
+  },
+  {
+   "id": "r3",
+   "text": "SENSOR LOOP POWER 24VDC feeds pressure transducer loop (see wiring diagram AEG-DWG-W03) IV-21 VALVE DRIVER TB-7 REF: PRESSURE XDCR LOOP"
+  }
+ ],
+ "claims": [
+  {
+   "region": "r2",
+   "quote": "T1 480:120V",
+   "entity": "component:T1",
+   "predicate": "supply_voltage",
+   "value": {
+    "type": "text",
+    "v": "480:120 V"
+   },
+   "critical_tokens": [
+    "480:120V"
+   ]
+  }
+ ]
+}

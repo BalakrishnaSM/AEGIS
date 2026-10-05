@@ -1,0 +1,35 @@
+{
+ "source": "screenshots/screen_01_home.png",
+ "sha256": "81fa08456f5a399d43f5a32e7915ffae8af6e1089f6c9ae03f1649d4fa17ac8c",
+ "reader": "assistant-transcription (unreviewed; VLM stand-in)",
+ "reviewed": false,
+ "regions": [
+  {
+   "id": "r1",
+   "text": "AEGIS SERIES-7 HCS — HOME SW REV 3.2 HPU DISCHARGE PRESSURE 200 bar STATUS: RUNNING — NORMAL"
+  },
+  {
+   "id": "r2",
+   "text": "STARTUP INTERLOCKS IV-21 (Isolation Valve) OPEN Emergency Stop RESET Maintenance Panel CLOSED Hydraulic Fluid Level NORMAL"
+  }
+ ],
+ "claims": [
+  {
+   "region": "r1",
+   "quote": "HPU DISCHARGE PRESSURE 200 bar",
+   "entity": "component:HPU",
+   "predicate": "observed_pressure",
+   "value": {
+    "type": "quantity",
+    "value": 200.0,
+    "unit": "bar"
+   },
+   "critical_tokens": [
+    "200",
+    "bar"
+   ],
+   "rev": "eq:3.2",
+   "basis": "instance_observation"
+  }
+ ]
+}

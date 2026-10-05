@@ -1,0 +1,8 @@
+.git
+__pycache__
+*.pyc
+.pytest_cache
+data/aegis.db
+data/llm_cache.sqlite
+eval/results
+.env

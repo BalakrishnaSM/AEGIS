@@ -1,0 +1,17 @@
+{
+ "source": "screenshots/screen_02_alarms.png",
+ "sha256": "7717ec7cb148c4ebb9c0b3280c0e535b6c8312b6e028f8b6f5417f9b76c080da",
+ "reader": "assistant-transcription (unreviewed; VLM stand-in)",
+ "reviewed": false,
+ "regions": [
+  {
+   "id": "r1",
+   "text": "AEGIS SERIES-7 HCS — ALARM LIST SW REV 3.2 A17 Hydraulic Pressure Low CLEARED A19 Pressure Sensor Signal Invalid CLEARED A17 Hydraulic Pressure Low ACTIVE A18 Hydraulic Pressure High INACTIVE"
+  },
+  {
+   "id": "r2",
+   "text": "Alarm A17 active for 00:00:14 — Shutdown Procedure 4.7 threshold: 00:00:10"
+  }
+ ],
+ "claims": []
+}

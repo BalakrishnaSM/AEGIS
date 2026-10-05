@@ -1,0 +1,3473 @@
+{
+  "schema_version": "0.1-draft",
+  "status": "DRAFT_FOR_REVIEW - freeze only after reviewer sign-off",
+  "corpus": {
+    "archive": "task-data.zip",
+    "sha256_prefix": "45c85e3e0cf942ea",
+    "dataset_root": "aegis-dataset/aegis-dataset"
+  },
+  "conventions": {
+    "status_enum": {
+      "ANSWERED": "every required slot covered by applicable claims",
+      "ANSWERED_SCOPED": "answer is scope-qualified (per-branch or explicit conditions)",
+      "CONFLICTED": "applicable same-scope claims disagree; both returned (not exercised by the 23 official questions)",
+      "PARTIAL": "some required slots covered, others are gaps",
+      "UNANSWERABLE": "a required slot has no applicable claim or the entity cannot be resolved"
+    },
+    "severity": {
+      "CRITICAL": "wrong entity/number/unit/revision; answering an UNANSWERABLE item; field-note value stated as fact",
+      "MAJOR": "wrong/missing citation; omitted required element; unflagged scope",
+      "MINOR": "wording"
+    },
+    "assertion_kind": {
+      "stated": "explicit in a source",
+      "inferred": "derived from >=2 evidence items by a named rule; must be labelled",
+      "structural": "derived from geometry/structure/normalization"
+    },
+    "evidence_roles": [
+      "primary",
+      "corroborating",
+      "derived",
+      "superseded_but_scope_valid",
+      "advisory",
+      "distractor",
+      "disregard_wrong_entity",
+      "checked_no_fact",
+      "illustrative",
+      "historical_only",
+      "rationale_not_scope",
+      "current_revision_evidence"
+    ],
+    "tier_note": "Document tier is descriptive only and never selects a winner; scope/entity relations decide applicability.",
+    "claim_keys": "Symbolic, not IDs: graders match on (entity, predicate, scope, value). Claim IDs do not exist before extraction.",
+    "verification_types": [
+      "pdf_text",
+      "xlsx_cell",
+      "json_path",
+      "docx_text",
+      "pptx_text",
+      "html_text",
+      "geometry_hydraulic",
+      "absence",
+      "manual_visual"
+    ],
+    "manual_visual_note": "Images and the scan have no reliable text layer (OCR misread A17 as 'Al7'). A human must eyeball these."
+  },
+  "ontology_draft": [
+    "requires_state",
+    "normal_operating_pressure",
+    "applicability_scope",
+    "alarm_trigger_condition",
+    "alarm_possible_cause",
+    "alarm_required_action",
+    "procedure_steps",
+    "reset_pressure_limit",
+    "superseded_by",
+    "is_distinct_from",
+    "introduced_by",
+    "connects_to_control_signal",
+    "changed_by",
+    "located_at",
+    "introduces_component",
+    "introduces_alarm",
+    "displays_tag",
+    "matches_entity",
+    "release_date",
+    "change_summary",
+    "config_key_maps_to",
+    "max_operating_temperature",
+    "calibration_interval",
+    "approver",
+    "mtbf",
+    "supply_voltage",
+    "supply_phase",
+    "supply_compatibility"
+  ],
+  "reviewer_decisions": [
+    {
+      "id": "D1",
+      "q": "Q6",
+      "issue": "A grey (hydraulic-fluid) line touches PLC-03 and the HPU. Gold excludes the HPU as control-connected per the legend but requires the caveat. Confirm, or declare the HPU a direct connection."
+    },
+    {
+      "id": "D2",
+      "q": "Q12",
+      "issue": "Gold requires the Auxiliary Reservoir and the excerpt-only caveat; Main Reservoir is also absent from the manuals but treated as optional. Confirm."
+    },
+    {
+      "id": "D3",
+      "q": "Q16",
+      "issue": "ECN-1042's 'manufactured after 2024' is treated as rationale, not a scope condition. Confirm."
+    },
+    {
+      "id": "D4",
+      "q": "Q18",
+      "issue": "'Pressure limit' read as the normal operating setpoint (180 bar), with a note that alarm limits are separate. Confirm."
+    },
+    {
+      "id": "D5",
+      "q": "Q23",
+      "issue": "Marked PARTIAL (480V facts exist, 400V/phase absent) rather than UNANSWERABLE. Confirm."
+    },
+    {
+      "id": "D6",
+      "q": "Q15",
+      "issue": "Mapping is labelled inferred (no document defines the key). Confirm that inferred is acceptable for this intent."
+    },
+    {
+      "id": "D7",
+      "q": "Q8",
+      "issue": "Boundary at exactly 50 bar and the missing Section 8 are recorded as gaps. Confirm."
+    },
+    {
+      "id": "D8",
+      "q": "Q2",
+      "issue": "'Current' resolved via config firmware 3.2.1 + revision history (3.3 unpublished). Confirm that no hard-coded max(version) is intended."
+    }
+  ],
+  "dataset_observations": [
+    "Package is smaller than task-description.pdf implies (e.g. operator manual is 2 pages; maintenance manual 1 page). Do not hard-code page counts.",
+    "Operator Manual has no Sections 3 or 8, yet Section 7 and the Maintenance Manual cite Section 8 (manual bleed procedure). Alarms A01-A16/A20-A34 live in AEG-AL-701, not in the package.",
+    "Diagnostics screenshot: if 4-20 mA maps linearly onto the calibrated 0-200 bar span, 14.8 mA is ~135 bar, not the displayed 200.3 bar. Not asked by any question; screenshot values are illustrative and must not be treated as specifications.",
+    "No official question expects CONFLICTED. The conflict path must be exercised by held-out/mutation tests (e.g. inject a same-scope contradicting claim).",
+    "Naive deskew (minAreaRect on dark pixels) estimated -88 deg on the scan and would have rotated it into garbage: preprocessing must be gated by an OCR-quality check."
+  ],
+  "traces": [
+    {
+      "question_id": "Q1",
+      "question_text": "What must be true before starting the Hydraulic Power Unit?",
+      "intent": "PRECONDITION_LIST",
+      "target_entities": [
+        "component:HPU"
+      ],
+      "required_slots": [
+        {
+          "entity": "component:HPU",
+          "predicate": "requires_state",
+          "required": true,
+          "allowed_assertion_kinds": [
+            "stated"
+          ]
+        }
+      ],
+      "scope": {
+        "software_revision": {
+          "op": ">=",
+          "value": "3.2"
+        },
+        "installed_sensor": "ANY",
+        "line": "ANY"
+      },
+      "expected_status": "ANSWERED",
+      "trap_types": [
+        "COMPLETENESS_ACROSS_SOURCES",
+        "WARNING_BLOCK_NOT_IN_BULLET_LIST",
+        "ALIAS_HPU"
+      ],
+      "expected_claims": [
+        {
+          "key": "hpu.start.fluid_level",
+          "entity": "component:HPU",
+          "predicate": "requires_state",
+          "value": "fluid level within normal sight-glass band",
+          "scope": {
+            "software_revision": {
+              "op": ">=",
+              "value": "3.2"
+            },
+            "installed_sensor": "ANY",
+            "line": "ANY"
+          },
+          "assertion_kind": "stated"
+        },
+        {
+          "key": "hpu.start.iv21",
+          "entity": "component:HPU",
+          "predicate": "requires_state",
+          "value": "IV-21 OPEN",
+          "scope": {
+            "software_revision": {
+              "op": ">=",
+              "value": "3.2"
+            },
+            "installed_sensor": "ANY",
+            "line": "ANY"
+          },
+          "assertion_kind": "stated"
+        },
+        {
+          "key": "hpu.start.estop",
+          "entity": "component:HPU",
+          "predicate": "requires_state",
+          "value": "emergency stop circuit RESET",
+          "scope": {
+            "software_revision": {
+              "op": ">=",
+              "value": "3.2"
+            },
+            "installed_sensor": "ANY",
+            "line": "ANY"
+          },
+          "assertion_kind": "stated"
+        },
+        {
+          "key": "hpu.start.panel",
+          "entity": "component:HPU",
+          "predicate": "requires_state",
+          "value": "maintenance access panel installed/closed (WARNING)",
+          "scope": {
+            "software_revision": {
+              "op": ">=",
+              "value": "3.2"
+            },
+            "installed_sensor": "ANY",
+            "line": "ANY"
+          },
+          "assertion_kind": "stated"
+        }
+      ],
+      "expected_evidence": [
+        {
+          "role": "primary",
+          "document": "manuals/operator_manual.pdf",
+          "locator": {
+            "page": 1
+          },
+          "check": {
+            "type": "pdf_text",
+            "page": 1,
+            "quotes": [
+              "Hydraulic fluid level is within the normal band on the sight glass.",
+              "Isolation valve IV-21 is OPEN.",
+              "The emergency stop circuit is RESET.",
+              "Do not start the Hydraulic Power Unit with the maintenance access panel removed."
+            ]
+          },
+          "note": null
+        },
+        {
+          "role": "corroborating",
+          "document": "configuration/configuration_export.json",
+          "locator": {
+            "json_path": "$.startup_interlocks.valve_iv21_required_state"
+          },
+          "check": {
+            "type": "json_path",
+            "path": "startup_interlocks.valve_iv21_required_state",
+            "equals": "OPEN"
+          },
+          "note": null
+        },
+        {
+          "role": "corroborating",
+          "document": "configuration/configuration_export.json",
+          "locator": {
+            "json_path": "$.startup_interlocks.estop_required_state"
+          },
+          "check": {
+            "type": "json_path",
+            "path": "startup_interlocks.estop_required_state",
+            "equals": "RESET"
+          },
+          "note": null
+        },
+        {
+          "role": "corroborating",
+          "document": "configuration/configuration_export.json",
+          "locator": {
+            "json_path": "$.startup_interlocks.maintenance_panel_required_state"
+          },
+          "check": {
+            "type": "json_path",
+            "path": "startup_interlocks.maintenance_panel_required_state",
+            "equals": "CLOSED"
+          },
+          "note": null
+        },
+        {
+          "role": "corroborating",
+          "document": "configuration/configuration_export.json",
+          "locator": {
+            "json_path": "$.startup_interlocks.fluid_level_required_band"
+          },
+          "check": {
+            "type": "json_path",
+            "path": "startup_interlocks.fluid_level_required_band",
+            "equals": "NORMAL"
+          },
+          "note": null
+        },
+        {
+          "role": "corroborating",
+          "document": "reference/component_register.xlsx",
+          "locator": {
+            "sheet": "Components",
+            "row_key": "IV-21",
+            "column": "Notes"
+          },
+          "check": {
+            "type": "xlsx_cell",
+            "sheet": "Components",
+            "key_col": "Component ID (as printed)",
+            "key": "IV-21",
+            "col": "Notes",
+            "equals": "Must be OPEN prior to HPU startup."
+          },
+          "note": null
+        },
+        {
+          "role": "derived",
+          "document": "extra/training_slide_excerpt.pptx",
+          "locator": {
+            "slide": 3
+          },
+          "check": {
+            "type": "pptx_text",
+            "slide": 3,
+            "quotes": [
+              "IV-21 fully open",
+              "Reset (not latched)",
+              "Installed and secured",
+              "Within the sight glass band"
+            ]
+          },
+          "note": "Slide restates the manual; not independent corroboration."
+        },
+        {
+          "role": "superseded_but_scope_valid",
+          "document": "manuals/legacy_manual_v1.html",
+          "locator": {},
+          "check": {
+            "type": "html_text",
+            "quotes": [
+              "Isolation valve IV-21 is open.",
+              "Do not start the unit with the maintenance access panel removed."
+            ]
+          },
+          "note": "Rev 1, applies to 3.0/3.1 only. Do not cite as primary for current units."
+        }
+      ],
+      "required_values": [],
+      "gaps": [],
+      "must_mention": [
+        "fluid level normal",
+        "IV-21 open",
+        "e-stop reset",
+        "access panel installed"
+      ],
+      "must_not_assert": [],
+      "critical_errors": [
+        "States any required state inverted (e.g. IV-21 closed, e-stop latched)"
+      ],
+      "major_errors": [
+        "Omits any one of the four conditions (most likely the panel, which sits in the WARNING block)"
+      ],
+      "consistency_group": null,
+      "gold_answer_summary": "Four conditions: fluid level within the normal sight-glass band; IV-21 OPEN; emergency-stop circuit RESET; maintenance access panel installed (the manual states this one as a WARNING outside the bullet list; the config export lists it as maintenance_panel CLOSED).",
+      "reviewer_notes": "Operator Manual lists 3 'verify' bullets; the 4th condition is the WARNING. Config export and slide 3 make four. HMI HOME screenshot shows the same four interlocks (illustrative state, not a spec).",
+      "reviewer_decision_ref": null
+    },
+    {
+      "question_id": "Q2",
+      "question_text": "What is the current normal operating pressure for the HPU, and under what conditions does that apply?",
+      "intent": "PARAMETER_QUERY_WITH_SCOPE",
+      "target_entities": [
+        "component:HPU",
+        "component:PS-04A"
+      ],
+      "required_slots": [
+        {
+          "entity": "component:HPU",
+          "predicate": "normal_operating_pressure",
+          "required": true,
+          "allowed_assertion_kinds": [
+            "stated"
+          ]
+        },
+        {
+          "entity": "component:HPU",
+          "predicate": "applicability_scope",
+          "required": true,
+          "allowed_assertion_kinds": [
+            "stated"
+          ]
+        }
+      ],
+      "scope": {
+        "software_revision": {
+          "op": "current",
+          "value": "resolve_from_corpus"
+        },
+        "installed_sensor": "ANY",
+        "line": "ANY"
+      },
+      "expected_status": "ANSWERED_SCOPED",
+      "trap_types": [
+        "VERSION_SCOPE",
+        "CURRENT_RESOLUTION",
+        "LOW_TRUST_DISTRACTOR"
+      ],
+      "expected_claims": [
+        {
+          "key": "hpu.normal_pressure.ge32",
+          "entity": "component:HPU",
+          "predicate": "normal_operating_pressure",
+          "value": 200,
+          "scope": {
+            "software_revision": {
+              "op": ">=",
+              "value": "3.2"
+            },
+            "installed_sensor": "component:PS-04A",
+            "line": "ANY"
+          },
+          "assertion_kind": "stated",
+          "unit": "bar"
+        },
+        {
+          "key": "hpu.normal_pressure.lt32",
+          "entity": "component:HPU",
+          "predicate": "normal_operating_pressure",
+          "value": 180,
+          "scope": {
+            "software_revision": {
+              "op": "<",
+              "value": "3.2"
+            },
+            "installed_sensor": "component:PS-04",
+            "line": "ANY"
+          },
+          "assertion_kind": "stated",
+          "unit": "bar"
+        }
+      ],
+      "expected_evidence": [
+        {
+          "role": "primary",
+          "document": "manuals/operator_manual.pdf",
+          "locator": {
+            "page": 1
+          },
+          "check": {
+            "type": "pdf_text",
+            "page": 1,
+            "quotes": [
+              "Normal HPU discharge pressure is 200 bar on software revision 3.2 and later.",
+              "reaches 200 bar. This is the normal operating pressure"
+            ]
+          },
+          "note": null
+        },
+        {
+          "role": "primary",
+          "document": "engineering_bulletins/ECN-1042.pdf",
+          "locator": {
+            "page": 1
+          },
+          "check": {
+            "type": "pdf_text",
+            "page": 1,
+            "quotes": [
+              "the normal HPU discharge pressure setpoint is revised from 180 bar to 200 bar."
+            ]
+          },
+          "note": null
+        },
+        {
+          "role": "corroborating",
+          "document": "configuration/configuration_export.json",
+          "locator": {
+            "json_path": "$.sensors.sensor_ps04a_threshold_bar"
+          },
+          "check": {
+            "type": "json_path",
+            "path": "sensors.sensor_ps04a_threshold_bar",
+            "equals": 200
+          },
+          "note": null
+        },
+        {
+          "role": "corroborating",
+          "document": "configuration/configuration_export.json",
+          "locator": {
+            "json_path": "$.revision_applicability.sensor_ps04a_threshold_bar.applies_from_firmware"
+          },
+          "check": {
+            "type": "json_path",
+            "path": "revision_applicability.sensor_ps04a_threshold_bar.applies_from_firmware",
+            "equals": "3.2"
+          },
+          "note": null
+        },
+        {
+          "role": "current_revision_evidence",
+          "document": "configuration/configuration_export.json",
+          "locator": {
+            "json_path": "$.export_metadata.firmware_version"
+          },
+          "check": {
+            "type": "json_path",
+            "path": "export_metadata.firmware_version",
+            "equals": "3.2.1"
+          },
+          "note": "Config export (2026-02-03) shows firmware 3.2.1."
+        },
+        {
+          "role": "current_revision_evidence",
+          "document": "reference/revision_history.xlsx",
+          "locator": {
+            "sheet": "Revision History",
+            "row_key": "3.2.1",
+            "column": "Release Date"
+          },
+          "check": {
+            "type": "xlsx_cell",
+            "sheet": "Revision History",
+            "key_col": "Software Revision",
+            "key": "3.2.1",
+            "col": "Release Date",
+            "equals": "2025-11-18"
+          },
+          "note": null
+        },
+        {
+          "role": "current_revision_evidence",
+          "document": "reference/revision_history.xlsx",
+          "locator": {
+            "sheet": "Revision History",
+            "row_key": "3.3",
+            "column": "Release Date"
+          },
+          "check": {
+            "type": "xlsx_cell",
+            "sheet": "Revision History",
+            "key_col": "Software Revision",
+            "key": "3.3",
+            "col": "Release Date",
+            "equals": "2026-04-07 (planned)"
+          },
+          "note": "3.3 is planned/unpublished in the corpus; its row says no setpoint changes planned."
+        },
+        {
+          "role": "advisory",
+          "document": "low_trust/site_survey_notes.docx",
+          "locator": {},
+          "check": {
+            "type": "docx_text",
+            "quotes": [
+              "read about 175 bar during a normal run, not 180 like the manual says it should be"
+            ]
+          },
+          "note": "Unreviewed, undated, revision unknown: advisory only. Never merge."
+        },
+        {
+          "role": "illustrative",
+          "document": "screenshots/screen_01_home.png",
+          "locator": {
+            "region": "HPU discharge pressure tile shows 200 bar, SW REV 3.2"
+          },
+          "check": {
+            "type": "manual_visual",
+            "observed": "HPU discharge pressure tile shows 200 bar, SW REV 3.2"
+          },
+          "note": "Live reading, not a specification."
+        }
+      ],
+      "required_values": [
+        {
+          "value": 200,
+          "unit": "bar",
+          "scope": ">=3.2"
+        }
+      ],
+      "gaps": [],
+      "must_mention": [
+        "200 bar",
+        "software revision 3.2 and later",
+        "PS-04A"
+      ],
+      "must_not_assert": [
+        "180 bar as the current value",
+        "175 bar as a value"
+      ],
+      "critical_errors": [
+        "Gives 180 bar as current",
+        "Cites 175 bar as the pressure"
+      ],
+      "major_errors": [
+        "Omits the revision condition"
+      ],
+      "consistency_group": "pressure_ge_3.2",
+      "gold_answer_summary": "200 bar normal HPU discharge pressure, applicable on software revision 3.2 and later (PS-04A installed). 'Current' resolves to >=3.2 because the corpus's latest released revision is 3.2.1 (revision history; config export); revision 3.3 is planned/unpublished and lists no setpoint change. 180 bar applies only to revisions before 3.2.",
+      "reviewer_notes": "Every revision >=3.2 in the corpus gives the same value, so the 'current' ambiguity is immaterial to the answer, but the system must show how it resolved it and must not hard-code current=max(version).",
+      "reviewer_decision_ref": "D8"
+    },
+    {
+      "question_id": "Q3",
+      "question_text": "What does alarm A17 indicate, and what are its possible causes?",
+      "intent": "ALARM_LOOKUP",
+      "target_entities": [
+        "alarm:A17"
+      ],
+      "required_slots": [
+        {
+          "entity": "alarm:A17",
+          "predicate": "alarm_trigger_condition",
+          "required": true,
+          "allowed_assertion_kinds": [
+            "stated"
+          ]
+        },
+        {
+          "entity": "alarm:A17",
+          "predicate": "alarm_possible_cause",
+          "required": true,
+          "allowed_assertion_kinds": [
+            "stated"
+          ]
+        }
+      ],
+      "scope": {
+        "software_revision": "ANY",
+        "installed_sensor": "ANY",
+        "line": "ANY"
+      },
+      "expected_status": "ANSWERED",
+      "trap_types": [
+        "SENSOR_NAME_CHANGE_ECN1058",
+        "TABLE_CELL_FRAGMENTS"
+      ],
+      "expected_claims": [
+        {
+          "key": "a17.condition",
+          "entity": "alarm:A17",
+          "predicate": "alarm_trigger_condition",
+          "value": "hydraulic pressure below 150 bar",
+          "scope": {
+            "software_revision": "ANY",
+            "installed_sensor": "ANY",
+            "line": "ANY"
+          },
+          "assertion_kind": "stated",
+          "unit": "bar"
+        },
+        {
+          "key": "a17.cause1",
+          "entity": "alarm:A17",
+          "predicate": "alarm_possible_cause",
+          "value": "IV-21 closed or partially closed",
+          "scope": {
+            "software_revision": "ANY",
+            "installed_sensor": "ANY",
+            "line": "ANY"
+          },
+          "assertion_kind": "stated"
+        },
+        {
+          "key": "a17.cause2",
+          "entity": "alarm:A17",
+          "predicate": "alarm_possible_cause",
+          "value": "low hydraulic fluid",
+          "scope": {
+            "software_revision": "ANY",
+            "installed_sensor": "ANY",
+            "line": "ANY"
+          },
+          "assertion_kind": "stated"
+        },
+        {
+          "key": "a17.cause3",
+          "entity": "alarm:A17",
+          "predicate": "alarm_possible_cause",
+          "value": "pressure sensor signal invalid",
+          "scope": {
+            "software_revision": "ANY",
+            "installed_sensor": "ANY",
+            "line": "ANY"
+          },
+          "assertion_kind": "stated"
+        }
+      ],
+      "expected_evidence": [
+        {
+          "role": "primary",
+          "document": "reference/alarm_reference.pdf",
+          "locator": {
+            "page": 1
+          },
+          "check": {
+            "type": "pdf_text",
+            "page": 1,
+            "quotes": [
+              "below 150 bar",
+              "IV-21 closed or",
+              "partially closed",
+              "Low hydraulic fluid",
+              "signal invalid",
+              "RED"
+            ]
+          },
+          "note": null
+        },
+        {
+          "role": "primary",
+          "document": "reference/alarm_reference.pdf",
+          "locator": {
+            "page": 1
+          },
+          "check": {
+            "type": "pdf_text",
+            "page": 1,
+            "quotes": [
+              "the condition is evaluated against whichever pressure sensor is active for the installed"
+            ]
+          },
+          "note": null
+        },
+        {
+          "role": "corroborating",
+          "document": "manuals/operator_manual.pdf",
+          "locator": {
+            "page": 2
+          },
+          "check": {
+            "type": "pdf_text",
+            "page": 2,
+            "quotes": [
+              "alarm A17 (Hydraulic Pressure Low)"
+            ]
+          },
+          "note": null
+        },
+        {
+          "role": "corroborating",
+          "document": "manuals/maintenance_manual.pdf",
+          "locator": {
+            "page": 1
+          },
+          "check": {
+            "type": "pdf_text",
+            "page": 1,
+            "quotes": [
+              "Isolation valve IV-21 is closed or partially closed.",
+              "Hydraulic fluid level is low."
+            ]
+          },
+          "note": null
+        },
+        {
+          "role": "corroborating",
+          "document": "configuration/configuration_export.json",
+          "locator": {
+            "json_path": "$.sensors.sensor_ps04a_alarm_low_bar"
+          },
+          "check": {
+            "type": "json_path",
+            "path": "sensors.sensor_ps04a_alarm_low_bar",
+            "equals": 150
+          },
+          "note": null
+        },
+        {
+          "role": "primary",
+          "document": "engineering_bulletins/ECN-1058.pdf",
+          "locator": {
+            "page": 1
+          },
+          "check": {
+            "type": "pdf_text",
+            "page": 1,
+            "quotes": [
+              "whichever pressure sensor is active for the installed software revision"
+            ]
+          },
+          "note": "ECN-1058: sensor-agnostic wording; a documentation correction, not a threshold change."
+        }
+      ],
+      "required_values": [],
+      "gaps": [],
+      "must_mention": [
+        "below 150 bar",
+        "IV-21 closed or partially closed",
+        "low fluid",
+        "sensor signal invalid"
+      ],
+      "must_not_assert": [],
+      "critical_errors": [
+        "Wrong threshold (e.g. 220 bar) or wrong alarm"
+      ],
+      "major_errors": [
+        "Omits a cause"
+      ],
+      "consistency_group": "alarm_a17",
+      "gold_answer_summary": "A17 is 'Hydraulic Pressure Low': active when hydraulic pressure is below 150 bar (panel indication RED). Possible causes: (1) IV-21 closed or partially closed, (2) low hydraulic fluid, (3) pressure sensor signal invalid. Evaluated against the active sensor (PS-04 before 3.2, PS-04A from 3.2).",
+      "reviewer_notes": null,
+      "reviewer_decision_ref": null
+    },
+    {
+      "question_id": "Q4",
+      "question_text": "Is PS-04 the same component as PS-04A?",
+      "intent": "IDENTITY",
+      "target_entities": [
+        "component:PS-04",
+        "component:PS-04A"
+      ],
+      "required_slots": [
+        {
+          "entity": "component:PS-04",
+          "predicate": "is_distinct_from",
+          "required": true,
+          "allowed_assertion_kinds": [
+            "stated"
+          ]
+        }
+      ],
+      "scope": {
+        "software_revision": "ANY",
+        "installed_sensor": "ANY",
+        "line": "ANY"
+      },
+      "expected_status": "ANSWERED",
+      "trap_types": [
+        "SUPERSESSION_NOT_IDENTITY",
+        "LEXICAL_NEAR_MATCH"
+      ],
+      "expected_claims": [
+        {
+          "key": "ps04.superseded_by.ps04a",
+          "entity": "component:PS-04",
+          "predicate": "superseded_by",
+          "value": "component:PS-04A",
+          "scope": {
+            "software_revision": {
+              "op": ">=",
+              "value": "3.2"
+            },
+            "installed_sensor": "ANY",
+            "line": "ANY"
+          },
+          "assertion_kind": "stated"
+        },
+        {
+          "key": "ps04a.not_ffs",
+          "entity": "component:PS-04A",
+          "predicate": "is_distinct_from",
+          "value": "component:PS-04 (not form-fit-function)",
+          "scope": {
+            "software_revision": "ANY",
+            "installed_sensor": "ANY",
+            "line": "ANY"
+          },
+          "assertion_kind": "stated"
+        }
+      ],
+      "expected_evidence": [
+        {
+          "role": "primary",
+          "document": "engineering_bulletins/ECN-1042.pdf",
+          "locator": {
+            "page": 1
+          },
+          "check": {
+            "type": "pdf_text",
+            "page": 1,
+            "quotes": [
+              "is not a form-fit-function replacement for",
+              "PS-04 remains installed and supported on units running software revisions prior to 3.2.",
+              "Do not install PS-04A on a controller running firmware older than 3.2."
+            ]
+          },
+          "note": null
+        },
+        {
+          "role": "primary",
+          "document": "reference/component_register.xlsx",
+          "locator": {
+            "sheet": "Components",
+            "row_key": "PS-04",
+            "column": "Status"
+          },
+          "check": {
+            "type": "xlsx_cell",
+            "sheet": "Components",
+            "key_col": "Component ID (as printed)",
+            "key": "PS-04",
+            "col": "Status",
+            "equals": "Superseded"
+          },
+          "note": null
+        },
+        {
+          "role": "primary",
+          "document": "reference/component_register.xlsx",
+          "locator": {
+            "sheet": "Components",
+            "row_key": "PS-04A",
+            "column": "Status"
+          },
+          "check": {
+            "type": "xlsx_cell",
+            "sheet": "Components",
+            "key_col": "Component ID (as printed)",
+            "key": "PS-04A",
+            "col": "Status",
+            "equals": "Active"
+          },
+          "note": null
+        },
+        {
+          "role": "primary",
+          "document": "reference/component_register.xlsx",
+          "locator": {
+            "sheet": "Components",
+            "row_key": "PS-04",
+            "column": "Notes"
+          },
+          "check": {
+            "type": "xlsx_cell",
+            "sheet": "Components",
+            "key_col": "Component ID (as printed)",
+            "key": "PS-04",
+            "col": "Notes",
+            "contains": "Superseded by PS-04A effective software rev 3.2"
+          },
+          "note": null
+        },
+        {
+          "role": "corroborating",
+          "document": "manuals/operator_manual.pdf",
+          "locator": {
+            "page": 1
+          },
+          "check": {
+            "type": "pdf_text",
+            "page": 1,
+            "quotes": [
+              "As of software revision 3.2, PS-04 is superseded by PS-04A"
+            ]
+          },
+          "note": null
+        }
+      ],
+      "required_values": [],
+      "gaps": [],
+      "must_mention": [
+        "not the same",
+        "PS-04A supersedes PS-04 from 3.2",
+        "not form-fit-function"
+      ],
+      "must_not_assert": [],
+      "critical_errors": [
+        "Says they are the same component / merges the entities"
+      ],
+      "major_errors": [
+        "Omits the revision relationship"
+      ],
+      "consistency_group": "identity",
+      "gold_answer_summary": "No. They are distinct components. PS-04A supersedes PS-04 from software revision 3.2 at the HPU discharge line, but it is not a form-fit-function replacement (new signal conditioning; needs firmware >=3.2). PS-04 stays supported on revisions before 3.2.",
+      "reviewer_notes": null,
+      "reviewer_decision_ref": null
+    },
+    {
+      "question_id": "Q5",
+      "question_text": "Which document introduced the change from PS-04 to PS-04A?",
+      "intent": "PROVENANCE_LOOKUP",
+      "target_entities": [
+        "document:ECN-1042"
+      ],
+      "required_slots": [
+        {
+          "entity": "component:PS-04A",
+          "predicate": "introduced_by",
+          "required": true,
+          "allowed_assertion_kinds": [
+            "stated"
+          ]
+        }
+      ],
+      "scope": {
+        "software_revision": "ANY",
+        "installed_sensor": "ANY",
+        "line": "ANY"
+      },
+      "expected_status": "ANSWERED",
+      "trap_types": [
+        "DISTRACTOR_DOCUMENT_ECN1058",
+        "MULTI_SOURCE_CORROBORATION"
+      ],
+      "expected_claims": [
+        {
+          "key": "ps04a.introduced_by",
+          "entity": "component:PS-04A",
+          "predicate": "introduced_by",
+          "value": "document:ECN-1042",
+          "scope": {
+            "software_revision": "ANY",
+            "installed_sensor": "ANY",
+            "line": "ANY"
+          },
+          "assertion_kind": "stated"
+        }
+      ],
+      "expected_evidence": [
+        {
+          "role": "primary",
+          "document": "engineering_bulletins/ECN-1042.pdf",
+          "locator": {
+            "page": 1
+          },
+          "check": {
+            "type": "pdf_text",
+            "page": 1,
+            "quotes": [
+              "Pressure Sensor Replacement (PS-04 → PS-04A) and Operating Pressure Update",
+              "Effective: Software Revision 3.2"
+            ]
+          },
+          "note": null
+        },
+        {
+          "role": "corroborating",
+          "document": "reference/revision_history.xlsx",
+          "locator": {
+            "sheet": "Revision History",
+            "row_key": "3.2",
+            "column": "Summary of Changes"
+          },
+          "check": {
+            "type": "xlsx_cell",
+            "sheet": "Revision History",
+            "key_col": "Software Revision",
+            "key": "3.2",
+            "col": "Summary of Changes",
+            "contains": "See ECN-1042."
+          },
+          "note": null
+        },
+        {
+          "role": "corroborating",
+          "document": "manuals/operator_manual.pdf",
+          "locator": {
+            "page": 1
+          },
+          "check": {
+            "type": "pdf_text",
+            "page": 1,
+            "quotes": [
+              "see Engineering Change Notice ECN-1042 for details"
+            ]
+          },
+          "note": null
+        },
+        {
+          "role": "distractor",
+          "document": "engineering_bulletins/ECN-1058.pdf",
+          "locator": {
+            "page": 1
+          },
+          "check": {
+            "type": "pdf_text",
+            "page": 1,
+            "quotes": [
+              "This is a documentation correction only."
+            ]
+          },
+          "note": "ECN-1058 references ECN-1042 but only corrects A17 sensor wording."
+        }
+      ],
+      "required_values": [],
+      "gaps": [],
+      "must_mention": [
+        "ECN-1042"
+      ],
+      "must_not_assert": [
+        "ECN-1058 as the introducing document"
+      ],
+      "critical_errors": [
+        "Names ECN-1058"
+      ],
+      "major_errors": [],
+      "consistency_group": "identity",
+      "gold_answer_summary": "ECN-1042, 'Pressure Sensor Replacement (PS-04 -> PS-04A) and Operating Pressure Update', effective software revision 3.2.",
+      "reviewer_notes": null,
+      "reviewer_decision_ref": null
+    },
+    {
+      "question_id": "Q6",
+      "question_text": "Which components connect directly to the HCS controller, according to the hydraulic schematic?",
+      "intent": "DIAGRAM_TOPOLOGY",
+      "target_entities": [
+        "component:PLC-03"
+      ],
+      "required_slots": [
+        {
+          "entity": "component:PLC-03",
+          "predicate": "connects_to_control_signal",
+          "required": true,
+          "allowed_assertion_kinds": [
+            "structural"
+          ]
+        }
+      ],
+      "scope": {
+        "software_revision": "ANY",
+        "installed_sensor": "ANY",
+        "line": "ANY"
+      },
+      "expected_status": "ANSWERED",
+      "trap_types": [
+        "VECTOR_GEOMETRY_ONLY",
+        "LEGEND_DEFINES_EDGE_TYPE",
+        "GREY_LINE_DECOY"
+      ],
+      "expected_claims": [
+        {
+          "key": "plc03.ctrl.ps04a",
+          "entity": "component:PLC-03",
+          "predicate": "connects_to_control_signal",
+          "value": "component:PS-04A",
+          "scope": {
+            "software_revision": "ANY",
+            "installed_sensor": "ANY",
+            "line": "ANY"
+          },
+          "assertion_kind": "structural"
+        },
+        {
+          "key": "plc03.ctrl.iv21",
+          "entity": "component:PLC-03",
+          "predicate": "connects_to_control_signal",
+          "value": "component:IV-21",
+          "scope": {
+            "software_revision": "ANY",
+            "installed_sensor": "ANY",
+            "line": "ANY"
+          },
+          "assertion_kind": "structural"
+        }
+      ],
+      "expected_evidence": [
+        {
+          "role": "primary",
+          "document": "diagrams/system_diagram_hydraulic.pdf",
+          "locator": {
+            "page": 1,
+            "method": "vector_geometry"
+          },
+          "check": {
+            "type": "geometry_hydraulic",
+            "purple_edges": [
+              [
+                "PLC-03",
+                "PS-04A"
+              ],
+              [
+                "PLC-03",
+                "IV-21"
+              ]
+            ]
+          },
+          "note": "Purple edges per legend = control/signal connections to PLC-03. A grey vertical line also touches PLC-03 and the HPU; grey = hydraulic fluid path per legend."
+        },
+        {
+          "role": "primary",
+          "document": "diagrams/system_diagram_hydraulic.pdf",
+          "locator": {
+            "page": 1
+          },
+          "check": {
+            "type": "pdf_text",
+            "page": 1,
+            "quotes": [
+              "purple lines: control/signal connections to PLC-03",
+              "grey lines: hydraulic fluid path"
+            ]
+          },
+          "note": null
+        },
+        {
+          "role": "corroborating",
+          "document": "diagrams/wiring_diagram.pdf",
+          "locator": {
+            "page": 1
+          },
+          "check": {
+            "type": "pdf_text",
+            "page": 1,
+            "quotes": [
+              "is the HPU",
+              "discharge pressure transducer described elsewhere as PS-04A"
+            ]
+          },
+          "note": "Wiring drawing: field devices at J-14 (PS-04A) and J-15 (IV-21 solenoid) terminate via TB-7 at PLC-03."
+        }
+      ],
+      "required_values": [],
+      "gaps": [],
+      "must_mention": [
+        "PS-04A",
+        "IV-21"
+      ],
+      "must_not_assert": [
+        "Main Reservoir/Auxiliary Reservoir/Press Circuit as controller-connected"
+      ],
+      "critical_errors": [
+        "Lists a reservoir or the press circuit as controller-connected",
+        "Omits PS-04A or IV-21"
+      ],
+      "major_errors": [
+        "Lists the HPU as control-connected without noting the legend/line-colour distinction"
+      ],
+      "consistency_group": null,
+      "gold_answer_summary": "PS-04A and IV-21, via the purple control/signal lines in AEG-DWG-H01. The HPU is also drawn touching PLC-03, but that line is grey (hydraulic fluid path per the legend), so it is not a control/signal connection. The reservoirs and press circuit do not connect to the controller.",
+      "reviewer_notes": "Answer must come from line geometry + legend, not from adjacency alone. The manual says PLC-03 'supervises' the HPU, which is a functional statement, not a drawn control connection.",
+      "reviewer_decision_ref": "D1"
+    },
+    {
+      "question_id": "Q7",
+      "question_text": "What action is required if alarm A17 persists for more than 10 seconds?",
+      "intent": "PROCEDURE_LOOKUP",
+      "target_entities": [
+        "alarm:A17"
+      ],
+      "required_slots": [
+        {
+          "entity": "alarm:A17",
+          "predicate": "alarm_required_action",
+          "required": true,
+          "allowed_assertion_kinds": [
+            "stated"
+          ]
+        }
+      ],
+      "scope": {
+        "software_revision": "ANY",
+        "installed_sensor": "ANY",
+        "line": "ANY"
+      },
+      "expected_status": "ANSWERED",
+      "trap_types": [
+        "CONDITIONAL_TRIGGER",
+        "FOOTNOTE",
+        "PROCEDURE_ONLY_IN_ONE_DOC"
+      ],
+      "expected_claims": [
+        {
+          "key": "a17.persist.action",
+          "entity": "alarm:A17",
+          "predicate": "alarm_required_action",
+          "value": "execute Shutdown Procedure 4.7 if persists >10 s",
+          "scope": {
+            "software_revision": "ANY",
+            "installed_sensor": "ANY",
+            "line": "ANY"
+          },
+          "assertion_kind": "stated"
+        },
+        {
+          "key": "proc47.steps",
+          "entity": "procedure:4.7",
+          "predicate": "procedure_steps",
+          "value": "close IV-21; confirm pressure decay; POWER selector OFF; tag out per site LOTO; then Section 6 troubleshooting",
+          "scope": {
+            "software_revision": "ANY",
+            "installed_sensor": "ANY",
+            "line": "ANY"
+          },
+          "assertion_kind": "stated"
+        }
+      ],
+      "expected_evidence": [
+        {
+          "role": "primary",
+          "document": "manuals/maintenance_manual.pdf",
+          "locator": {
+            "page": 1
+          },
+          "check": {
+            "type": "pdf_text",
+            "page": 1,
+            "quotes": [
+              "If alarm A17 persists for more than 10 seconds, execute Shutdown Procedure 4.7 before investigating further.",
+              "Shutdown Procedure 4.7: close IV-21, confirm pressure decay, set POWER selector to OFF, tag out per site lockout/tagout procedure, then proceed to Section 6 (Troubleshooting).",
+              "Do not attempt to clear a persistent A17 by silencing the alarm alone."
+            ]
+          },
+          "note": null
+        },
+        {
+          "role": "primary",
+          "document": "reference/alarm_reference.pdf",
+          "locator": {
+            "page": 1
+          },
+          "check": {
+            "type": "pdf_text",
+            "page": 1,
+            "quotes": [
+              "Shutdown Procedure 4.7 applies only when A17 persists beyond 10 seconds."
+            ]
+          },
+          "note": null
+        },
+        {
+          "role": "corroborating",
+          "document": "configuration/configuration_export.json",
+          "locator": {
+            "json_path": "$.alarms.A17.persistence_before_shutdown_seconds"
+          },
+          "check": {
+            "type": "json_path",
+            "path": "alarms.A17.persistence_before_shutdown_seconds",
+            "equals": 10
+          },
+          "note": null
+        },
+        {
+          "role": "corroborating",
+          "document": "configuration/configuration_export.json",
+          "locator": {
+            "json_path": "$.alarms.A17.shutdown_procedure_ref"
+          },
+          "check": {
+            "type": "json_path",
+            "path": "alarms.A17.shutdown_procedure_ref",
+            "equals": "4.7"
+          },
+          "note": "Config only references '4.7'; steps live only in the Maintenance Manual."
+        },
+        {
+          "role": "illustrative",
+          "document": "screenshots/screen_02_alarms.png",
+          "locator": {
+            "region": "Footer: Alarm A17 active for 00:00:14 - Shutdown Procedure 4.7 threshold: 00:00:10"
+          },
+          "check": {
+            "type": "manual_visual",
+            "observed": "Footer: Alarm A17 active for 00:00:14 - Shutdown Procedure 4.7 threshold: 00:00:10"
+          },
+          "note": null
+        }
+      ],
+      "required_values": [],
+      "gaps": [],
+      "must_mention": [
+        "Shutdown Procedure 4.7",
+        "10 seconds condition",
+        "close IV-21",
+        "POWER OFF",
+        "lockout/tagout"
+      ],
+      "must_not_assert": [],
+      "critical_errors": [
+        "Says shutdown is required for any A17, or omits the 10 s condition",
+        "Omits Procedure 4.7 entirely"
+      ],
+      "major_errors": [
+        "Omits steps of 4.7"
+      ],
+      "consistency_group": "alarm_a17",
+      "gold_answer_summary": "Execute Shutdown Procedure 4.7: close IV-21, confirm pressure decay, set the POWER selector to OFF, tag out per the site lockout/tagout procedure, then go to Section 6 troubleshooting. Do not just silence the alarm. A transient A17 that clears on its own does not require 4.7.",
+      "reviewer_notes": null,
+      "reviewer_decision_ref": null
+    },
+    {
+      "question_id": "Q8",
+      "question_text": "Under what circumstances must the controller not be reset?",
+      "intent": "SAFETY_CONSTRAINT",
+      "target_entities": [
+        "component:PLC-03"
+      ],
+      "required_slots": [
+        {
+          "entity": "component:PLC-03",
+          "predicate": "reset_pressure_limit",
+          "required": true,
+          "allowed_assertion_kinds": [
+            "stated"
+          ]
+        }
+      ],
+      "scope": {
+        "software_revision": "ANY",
+        "installed_sensor": "ANY",
+        "line": "ANY"
+      },
+      "expected_status": "ANSWERED",
+      "trap_types": [
+        "NUMERIC_THRESHOLD_COLLISION",
+        "BOUNDARY_AMBIGUITY",
+        "REFERENCED_SECTION_MISSING"
+      ],
+      "expected_claims": [
+        {
+          "key": "plc03.reset.max",
+          "entity": "component:PLC-03",
+          "predicate": "reset_pressure_limit",
+          "value": 50,
+          "scope": {
+            "software_revision": "ANY",
+            "installed_sensor": "ANY",
+            "line": "ANY"
+          },
+          "assertion_kind": "stated",
+          "unit": "bar"
+        }
+      ],
+      "expected_evidence": [
+        {
+          "role": "primary",
+          "document": "manuals/operator_manual.pdf",
+          "locator": {
+            "page": 2
+          },
+          "check": {
+            "type": "pdf_text",
+            "page": 2,
+            "quotes": [
+              "Do not reset the PLC-03 controller while hydraulic pressure is above 50 bar.",
+              "can cause an uncommanded valve transition"
+            ]
+          },
+          "note": null
+        },
+        {
+          "role": "primary",
+          "document": "manuals/maintenance_manual.pdf",
+          "locator": {
+            "page": 1
+          },
+          "check": {
+            "type": "pdf_text",
+            "page": 1,
+            "quotes": [
+              "Do NOT reset the PLC-03 controller while hydraulic pressure is above 50 bar.",
+              "reads below 50 bar",
+              "uncommanded actuation of Isolation Valve IV-21"
+            ]
+          },
+          "note": null
+        },
+        {
+          "role": "corroborating",
+          "document": "configuration/configuration_export.json",
+          "locator": {
+            "json_path": "$.controller_reset.max_pressure_bar_allowed_for_reset"
+          },
+          "check": {
+            "type": "json_path",
+            "path": "controller_reset.max_pressure_bar_allowed_for_reset",
+            "equals": 50
+          },
+          "note": null
+        },
+        {
+          "role": "corroborating",
+          "document": "configuration/configuration_export.json",
+          "locator": {
+            "json_path": "$.controller_reset.min_pressure_bar_required_for_reset"
+          },
+          "check": {
+            "type": "json_path",
+            "path": "controller_reset.min_pressure_bar_required_for_reset",
+            "equals": null
+          },
+          "note": "Explicit null: no minimum pressure required."
+        }
+      ],
+      "required_values": [],
+      "gaps": [
+        "Exactly 50 bar is unspecified (manual: 'above 50' forbidden / 'below 50' permitted; firmware blocks 'above 50').",
+        "The manual bleed procedure (Operator Manual Section 8) is cited but not in the package."
+      ],
+      "must_mention": [
+        "above 50 bar",
+        "uncommanded valve transition"
+      ],
+      "must_not_assert": [
+        "150/220/200 bar as the reset limit"
+      ],
+      "critical_errors": [
+        "Wrong threshold"
+      ],
+      "major_errors": [],
+      "consistency_group": null,
+      "gold_answer_summary": "Do not reset PLC-03 while hydraulic pressure is above 50 bar (it can cause an uncommanded valve transition, e.g. momentary IV-21 actuation). Reset is only permitted when the active pressure sensor (PS-04 before 3.2, PS-04A from 3.2) reads below 50 bar; bleed pressure first.",
+      "reviewer_notes": "Do not invent the Section 8 steps.",
+      "reviewer_decision_ref": "D7"
+    },
+    {
+      "question_id": "Q9",
+      "question_text": "What was the operating pressure threshold before software revision 3.2, and what changed it?",
+      "intent": "PARAMETER_HISTORY",
+      "target_entities": [
+        "component:HPU",
+        "component:PS-04"
+      ],
+      "required_slots": [
+        {
+          "entity": "component:HPU",
+          "predicate": "normal_operating_pressure",
+          "required": true,
+          "allowed_assertion_kinds": [
+            "stated"
+          ]
+        },
+        {
+          "entity": "component:HPU",
+          "predicate": "changed_by",
+          "required": true,
+          "allowed_assertion_kinds": [
+            "stated"
+          ]
+        }
+      ],
+      "scope": {
+        "software_revision": {
+          "op": "<",
+          "value": "3.2"
+        },
+        "installed_sensor": "component:PS-04",
+        "line": "ANY"
+      },
+      "expected_status": "ANSWERED",
+      "trap_types": [
+        "VERSION_SCOPE",
+        "TERMINOLOGY_THRESHOLD_COLLISION",
+        "SUPERSEDED_DOC_STILL_VALID_FOR_ITS_SCOPE"
+      ],
+      "expected_claims": [
+        {
+          "key": "hpu.normal_pressure.lt32",
+          "entity": "component:HPU",
+          "predicate": "normal_operating_pressure",
+          "value": 180,
+          "scope": {
+            "software_revision": {
+              "op": "<",
+              "value": "3.2"
+            },
+            "installed_sensor": "component:PS-04",
+            "line": "ANY"
+          },
+          "assertion_kind": "stated",
+          "unit": "bar"
+        },
+        {
+          "key": "hpu.pressure_change.cause",
+          "entity": "component:HPU",
+          "predicate": "changed_by",
+          "value": "document:ECN-1042 (setpoint 180->200 bar with PS-04 -> PS-04A, effective 3.2)",
+          "scope": {
+            "software_revision": "ANY",
+            "installed_sensor": "ANY",
+            "line": "ANY"
+          },
+          "assertion_kind": "stated"
+        }
+      ],
+      "expected_evidence": [
+        {
+          "role": "primary",
+          "document": "manuals/operator_manual.pdf",
+          "locator": {
+            "page": 1
+          },
+          "check": {
+            "type": "pdf_text",
+            "page": 1,
+            "quotes": [
+              "normal discharge pressure was 180 bar, measured by the original PS-04 sensor."
+            ]
+          },
+          "note": null
+        },
+        {
+          "role": "primary",
+          "document": "engineering_bulletins/ECN-1042.pdf",
+          "locator": {
+            "page": 1
+          },
+          "check": {
+            "type": "pdf_text",
+            "page": 1,
+            "quotes": [
+              "the normal HPU discharge pressure setpoint is revised from 180 bar to 200 bar."
+            ]
+          },
+          "note": null
+        },
+        {
+          "role": "corroborating",
+          "document": "configuration/configuration_export.json",
+          "locator": {
+            "json_path": "$.revision_applicability.sensor_ps04_legacy_threshold_bar.value"
+          },
+          "check": {
+            "type": "json_path",
+            "path": "revision_applicability.sensor_ps04_legacy_threshold_bar.value",
+            "equals": 180
+          },
+          "note": null
+        },
+        {
+          "role": "corroborating",
+          "document": "configuration/configuration_export.json",
+          "locator": {
+            "json_path": "$.revision_applicability.sensor_ps04_legacy_threshold_bar.applies_before_firmware"
+          },
+          "check": {
+            "type": "json_path",
+            "path": "revision_applicability.sensor_ps04_legacy_threshold_bar.applies_before_firmware",
+            "equals": "3.2"
+          },
+          "note": null
+        },
+        {
+          "role": "corroborating",
+          "document": "reference/revision_history.xlsx",
+          "locator": {
+            "sheet": "Revision History",
+            "row_key": "3.2",
+            "column": "Summary of Changes"
+          },
+          "check": {
+            "type": "xlsx_cell",
+            "sheet": "Revision History",
+            "key_col": "Software Revision",
+            "key": "3.2",
+            "col": "Summary of Changes",
+            "contains": "setpoint changed from 180 bar to 200 bar"
+          },
+          "note": null
+        },
+        {
+          "role": "superseded_but_scope_valid",
+          "document": "manuals/legacy_manual_v1.html",
+          "locator": {},
+          "check": {
+            "type": "html_text",
+            "quotes": [
+              "Normal HPU discharge pressure is 180 bar, as measured by pressure sensor PS-04."
+            ]
+          },
+          "note": "Rev 1 applies to 3.0/3.1: valid for this question's scope, though superseded for current units."
+        },
+        {
+          "role": "historical_only",
+          "document": "scans/scanned_appendix_calibration.pdf",
+          "locator": {
+            "region": "Note: prior sensor (PS-04) span reference target was 180 bar - historical comparison only"
+          },
+          "check": {
+            "type": "manual_visual",
+            "observed": "Note: prior sensor (PS-04) span reference target was 180 bar - historical comparison only"
+          },
+          "note": null
+        }
+      ],
+      "required_values": [
+        {
+          "value": 180,
+          "unit": "bar",
+          "scope": "<3.2"
+        }
+      ],
+      "gaps": [],
+      "must_mention": [
+        "180 bar",
+        "ECN-1042",
+        "software revision 3.2"
+      ],
+      "must_not_assert": [
+        "150 bar as the operating pressure",
+        "200 bar as the pre-3.2 value"
+      ],
+      "critical_errors": [
+        "Answers 200 bar, or 150 bar (A17 alarm threshold)"
+      ],
+      "major_errors": [
+        "Omits what changed it"
+      ],
+      "consistency_group": "pressure_lt_3.2",
+      "gold_answer_summary": "180 bar (normal HPU discharge pressure, measured by PS-04) on software revisions before 3.2. It was changed to 200 bar by ECN-1042, effective software revision 3.2, alongside the PS-04 -> PS-04A sensor replacement.",
+      "reviewer_notes": null,
+      "reviewer_decision_ref": null
+    },
+    {
+      "question_id": "Q10",
+      "question_text": "Which alarm is associated with a pressure sensor reading below 150 bar?",
+      "intent": "ALARM_LOOKUP_REVERSE",
+      "target_entities": [
+        "alarm:A17"
+      ],
+      "required_slots": [
+        {
+          "entity": "alarm:A17",
+          "predicate": "alarm_trigger_condition",
+          "required": true,
+          "allowed_assertion_kinds": [
+            "stated"
+          ]
+        }
+      ],
+      "scope": {
+        "software_revision": "ANY",
+        "installed_sensor": "ANY",
+        "line": "ANY"
+      },
+      "expected_status": "ANSWERED",
+      "trap_types": [
+        "LEXICAL_DISTRACTOR_A19",
+        "NUMERIC_MATCH"
+      ],
+      "expected_claims": [
+        {
+          "key": "a17.condition",
+          "entity": "alarm:A17",
+          "predicate": "alarm_trigger_condition",
+          "value": "hydraulic pressure below 150 bar",
+          "scope": {
+            "software_revision": "ANY",
+            "installed_sensor": "ANY",
+            "line": "ANY"
+          },
+          "assertion_kind": "stated",
+          "unit": "bar"
+        }
+      ],
+      "expected_evidence": [
+        {
+          "role": "primary",
+          "document": "reference/alarm_reference.pdf",
+          "locator": {
+            "page": 1
+          },
+          "check": {
+            "type": "pdf_text",
+            "page": 1,
+            "quotes": [
+              "below 150 bar"
+            ]
+          },
+          "note": null
+        },
+        {
+          "role": "corroborating",
+          "document": "configuration/configuration_export.json",
+          "locator": {
+            "json_path": "$.sensors.sensor_ps04a_alarm_low_bar"
+          },
+          "check": {
+            "type": "json_path",
+            "path": "sensors.sensor_ps04a_alarm_low_bar",
+            "equals": 150
+          },
+          "note": null
+        },
+        {
+          "role": "corroborating",
+          "document": "reference/component_register.xlsx",
+          "locator": {
+            "sheet": "Components",
+            "row_key": "A17",
+            "column": "Common Name"
+          },
+          "check": {
+            "type": "xlsx_cell",
+            "sheet": "Components",
+            "key_col": "Component ID (as printed)",
+            "key": "A17",
+            "col": "Common Name",
+            "equals": "Alarm: Hydraulic Pressure Low"
+          },
+          "note": null
+        },
+        {
+          "role": "distractor",
+          "document": "reference/alarm_reference.pdf",
+          "locator": {
+            "page": 1
+          },
+          "check": {
+            "type": "pdf_text",
+            "page": 1,
+            "quotes": [
+              "Sensor wiring fault"
+            ]
+          },
+          "note": "A19 'Pressure Sensor Signal Invalid' shares words with the question but is a signal-validity alarm, not a pressure threshold."
+        }
+      ],
+      "required_values": [],
+      "gaps": [],
+      "must_mention": [
+        "A17"
+      ],
+      "must_not_assert": [
+        "A19 as the answer",
+        "A18 as the answer"
+      ],
+      "critical_errors": [
+        "Names A18 or A19"
+      ],
+      "major_errors": [],
+      "consistency_group": "alarm_a17",
+      "gold_answer_summary": "Alarm A17 (Hydraulic Pressure Low): hydraulic pressure below 150 bar. (A18 is above 220 bar; A19 is sensor signal invalid.)",
+      "reviewer_notes": null,
+      "reviewer_decision_ref": null
+    },
+    {
+      "question_id": "Q11",
+      "question_text": "According to the component register, what is the location of the isolation valve IV-21?",
+      "intent": "REGISTER_LOOKUP",
+      "target_entities": [
+        "component:IV-21"
+      ],
+      "required_slots": [
+        {
+          "entity": "component:IV-21",
+          "predicate": "located_at",
+          "required": true,
+          "allowed_assertion_kinds": [
+            "stated"
+          ]
+        }
+      ],
+      "scope": {
+        "software_revision": "ANY",
+        "installed_sensor": "ANY",
+        "line": "ANY"
+      },
+      "expected_status": "ANSWERED",
+      "trap_types": [
+        "WRONG_ENTITY_LOCATION_DISTRACTOR",
+        "ID_FORMAT_VARIANTS"
+      ],
+      "expected_claims": [
+        {
+          "key": "iv21.location",
+          "entity": "component:IV-21",
+          "predicate": "located_at",
+          "value": "Hydraulic Module",
+          "scope": {
+            "software_revision": "ANY",
+            "installed_sensor": "ANY",
+            "line": "ANY"
+          },
+          "assertion_kind": "stated"
+        }
+      ],
+      "expected_evidence": [
+        {
+          "role": "primary",
+          "document": "reference/component_register.xlsx",
+          "locator": {
+            "sheet": "Components",
+            "row_key": "IV-21",
+            "column": "Location"
+          },
+          "check": {
+            "type": "xlsx_cell",
+            "sheet": "Components",
+            "key_col": "Component ID (as printed)",
+            "key": "IV-21",
+            "col": "Location",
+            "equals": "Hydraulic Module"
+          },
+          "note": null
+        },
+        {
+          "role": "distractor",
+          "document": "reference/component_register.xlsx",
+          "locator": {
+            "sheet": "Components",
+            "row_key": "HPU",
+            "column": "Location"
+          },
+          "check": {
+            "type": "xlsx_cell",
+            "sheet": "Components",
+            "key_col": "Component ID (as printed)",
+            "key": "HPU",
+            "col": "Location",
+            "equals": "Skid A, Bay 2"
+          },
+          "note": "HPU location, not IV-21."
+        }
+      ],
+      "required_values": [],
+      "gaps": [],
+      "must_mention": [
+        "Hydraulic Module"
+      ],
+      "must_not_assert": [
+        "Skid A, Bay 2 as the IV-21 location"
+      ],
+      "critical_errors": [
+        "Gives HPU's or another component's location"
+      ],
+      "major_errors": [],
+      "consistency_group": null,
+      "gold_answer_summary": "Hydraulic Module (component register AEG-CR-700, row IV-21; known aliases 'Isolation Valve' and 'IV21').",
+      "reviewer_notes": null,
+      "reviewer_decision_ref": null
+    },
+    {
+      "question_id": "Q12",
+      "question_text": "Does the training slide deck introduce any component or alarm not found in the manuals?",
+      "intent": "CROSS_DOCUMENT_DIFF_NEGATIVE",
+      "target_entities": [
+        "document:training_slide_excerpt"
+      ],
+      "required_slots": [
+        {
+          "entity": "document:training_slide_excerpt",
+          "predicate": "introduces_component",
+          "required": true,
+          "allowed_assertion_kinds": [
+            "stated"
+          ]
+        },
+        {
+          "entity": "document:training_slide_excerpt",
+          "predicate": "introduces_alarm",
+          "required": true,
+          "allowed_assertion_kinds": [
+            "stated"
+          ]
+        }
+      ],
+      "scope": {
+        "software_revision": "ANY",
+        "installed_sensor": "ANY",
+        "line": "Line 4/5"
+      },
+      "expected_status": "ANSWERED_SCOPED",
+      "trap_types": [
+        "EXCERPT_ONLY_SCOPE",
+        "CLOSED_WORLD_NEGATIVE",
+        "CROSS_MODAL",
+        "ALIAS_VS_NEW_ENTITY"
+      ],
+      "expected_claims": [
+        {
+          "key": "slides.new_component",
+          "entity": "document:training_slide_excerpt",
+          "predicate": "introduces_component",
+          "value": "Auxiliary Reservoir (Line 4/5-specific)",
+          "scope": {
+            "software_revision": "ANY",
+            "installed_sensor": "ANY",
+            "line": "Line 4/5"
+          },
+          "assertion_kind": "stated"
+        },
+        {
+          "key": "slides.no_new_alarm",
+          "entity": "document:training_slide_excerpt",
+          "predicate": "introduces_alarm",
+          "value": "none (no alarm IDs in the excerpt)",
+          "scope": {
+            "software_revision": "ANY",
+            "installed_sensor": "ANY",
+            "line": "ANY"
+          },
+          "assertion_kind": "stated"
+        }
+      ],
+      "expected_evidence": [
+        {
+          "role": "primary",
+          "document": "extra/training_slide_excerpt.pptx",
+          "locator": {
+            "slide": 2
+          },
+          "check": {
+            "type": "pptx_text",
+            "slide": 2,
+            "quotes": [
+              "Auxiliary Reservoir",
+              "is a Line 4/5-specific configuration detail and is not covered in the standard Operator Manual"
+            ]
+          },
+          "note": null
+        },
+        {
+          "role": "corroborating",
+          "document": "diagrams/system_diagram_hydraulic.pdf",
+          "locator": {
+            "page": 1
+          },
+          "check": {
+            "type": "pdf_text",
+            "page": 1,
+            "quotes": [
+              "Auxiliary"
+            ]
+          },
+          "note": "Auxiliary Reservoir is drawn in the hydraulic schematic (tan interconnect to Main Reservoir) although absent from the manuals and the register."
+        },
+        {
+          "role": "primary",
+          "document": "extra/training_slide_excerpt.pptx",
+          "locator": {
+            "slide": 2
+          },
+          "check": {
+            "type": "pptx_text",
+            "slide": 2,
+            "quotes": [
+              "hydraulic pack"
+            ]
+          },
+          "note": "'hydraulic pack' is an informal alias of the HPU (same slide says 'same thing'); not a new component."
+        },
+        {
+          "role": "checked_no_fact",
+          "document": "*text-layer sources*",
+          "locator": {},
+          "check": {
+            "type": "absence",
+            "patterns": [
+              "Auxiliary\\s+Reservoir"
+            ],
+            "allowed_in": [
+              "extra/training_slide_excerpt.pptx",
+              "diagrams/system_diagram_hydraulic.pdf"
+            ]
+          },
+          "note": "Not in manuals/register/alarm reference."
+        }
+      ],
+      "required_values": [],
+      "gaps": [],
+      "must_mention": [
+        "Auxiliary Reservoir",
+        "excerpt only",
+        "no new alarm"
+      ],
+      "must_not_assert": [
+        "claims a new alarm",
+        "treats 'hydraulic pack' as a new component"
+      ],
+      "critical_errors": [
+        "Asserts a new alarm",
+        "Says nothing new is introduced"
+      ],
+      "major_errors": [
+        "Does not state the excerpt-only limit",
+        "Says the Auxiliary Reservoir appears nowhere in the package"
+      ],
+      "consistency_group": null,
+      "gold_answer_summary": "Yes, one component: the Auxiliary Reservoir (a Line 4/5-specific top-up reservoir), which the slide itself says is not covered in the standard Operator Manual (it is, however, drawn in the hydraulic schematic AEG-DWG-H01). No new alarm is introduced. 'Hydraulic pack' is only an informal alias for the HPU. Scope: the file is a 3-slide excerpt of a larger deck, so the answer holds for the excerpt.",
+      "reviewer_notes": "The 'Main Reservoir' is also absent from the manuals and register but the slide treats it as standard; acceptable to mention as secondary, never required.",
+      "reviewer_decision_ref": "D2"
+    },
+    {
+      "question_id": "Q13",
+      "question_text": "What sensor ID appears on the diagnostics screenshot, and does it match a known component",
+      "intent": "IDENTITY_FROM_IMAGE",
+      "target_entities": [
+        "component:PS-04A"
+      ],
+      "required_slots": [
+        {
+          "entity": "component:PS-04A",
+          "predicate": "displays_tag",
+          "required": true,
+          "allowed_assertion_kinds": [
+            "stated"
+          ]
+        },
+        {
+          "entity": "component:PS-04A",
+          "predicate": "matches_entity",
+          "required": true,
+          "allowed_assertion_kinds": [
+            "stated"
+          ]
+        }
+      ],
+      "scope": {
+        "software_revision": "ANY",
+        "installed_sensor": "ANY",
+        "line": "ANY"
+      },
+      "expected_status": "ANSWERED",
+      "trap_types": [
+        "OCR_UNRELIABLE_IDS",
+        "ID_NORMALIZATION_NOT_FUZZY",
+        "SCREEN_FORMAT_DIFFERS_FROM_REGISTER"
+      ],
+      "expected_claims": [
+        {
+          "key": "screen3.tag",
+          "entity": "screen:diagnostics",
+          "predicate": "displays_tag",
+          "value": "P.S.04-A",
+          "scope": {
+            "software_revision": "ANY",
+            "installed_sensor": "ANY",
+            "line": "ANY"
+          },
+          "assertion_kind": "stated"
+        },
+        {
+          "key": "screen3.resolves",
+          "entity": "screen:diagnostics",
+          "predicate": "matches_entity",
+          "value": "component:PS-04A",
+          "scope": {
+            "software_revision": "ANY",
+            "installed_sensor": "ANY",
+            "line": "ANY"
+          },
+          "assertion_kind": "structural"
+        }
+      ],
+      "expected_evidence": [
+        {
+          "role": "primary",
+          "document": "screenshots/screen_03_diagnostics.png",
+          "locator": {
+            "region": "Tag: P.S.04-A; signal 4-20 mA; calibration WITHIN TOLERANCE; last calibrated 2026-01-09; Firmware 3.2.1; header SW REV 3.2"
+          },
+          "check": {
+            "type": "manual_visual",
+            "observed": "Tag: P.S.04-A; signal 4-20 mA; calibration WITHIN TOLERANCE; last calibrated 2026-01-09; Firmware 3.2.1; header SW REV 3.2"
+          },
+          "note": "Tesseract misread IDs on the sibling screenshots (A17 -> 'Al7'); the tag must come from VLM/manual read and be resolved by deterministic normalization."
+        },
+        {
+          "role": "primary",
+          "document": "screenshots/screen_03_diagnostics.png",
+          "locator": {
+            "region": "Note: this screen displays the sensor tag as printed on the physical unit label."
+          },
+          "check": {
+            "type": "manual_visual",
+            "observed": "Note: this screen displays the sensor tag as printed on the physical unit label."
+          },
+          "note": null
+        },
+        {
+          "role": "primary",
+          "document": "reference/component_register.xlsx",
+          "locator": {
+            "sheet": "Components",
+            "row_key": "PS-04A",
+            "column": "Known Aliases"
+          },
+          "check": {
+            "type": "xlsx_cell",
+            "sheet": "Components",
+            "key_col": "Component ID (as printed)",
+            "key": "PS-04A",
+            "col": "Known Aliases",
+            "equals": "P04A; PS04A"
+          },
+          "note": "Alias list does NOT contain 'P.S.04-A' verbatim. Match is by punctuation-insensitive normalization (P.S.04-A -> PS04A), recorded as a normalized (not exact, not fuzzy) resolution."
+        },
+        {
+          "role": "corroborating",
+          "document": "diagrams/wiring_diagram.pdf",
+          "locator": {
+            "page": 1
+          },
+          "check": {
+            "type": "pdf_text",
+            "page": 1,
+            "quotes": [
+              "discharge pressure transducer described elsewhere as PS-04A"
+            ]
+          },
+          "note": null
+        }
+      ],
+      "required_values": [],
+      "gaps": [],
+      "must_mention": [
+        "P.S.04-A",
+        "PS-04A"
+      ],
+      "must_not_assert": [
+        "PS-04",
+        "PS-40"
+      ],
+      "critical_errors": [
+        "Resolves to PS-04 or PS-40",
+        "Says no match"
+      ],
+      "major_errors": [
+        "Reports the tag as 'PS-04A' without noting the displayed form"
+      ],
+      "consistency_group": null,
+      "gold_answer_summary": "The screenshot shows tag 'P.S.04-A'. After punctuation normalization it resolves to PS-04A (HPU discharge pressure sensor, Active in the component register), not PS-04 and not PS-40. It is a display-format variant of the tag printed on the unit label.",
+      "reviewer_notes": "Screenshot also shows firmware 3.2.1 in the body vs SW REV 3.2 in the header: different granularity, not a conflict.",
+      "reviewer_decision_ref": null
+    },
+    {
+      "question_id": "Q14",
+      "question_text": "Per the revision history, when did software revision 3.2 take effect, and what changed alongside it?",
+      "intent": "TABLE_LOOKUP",
+      "target_entities": [
+        "software_revision:3.2"
+      ],
+      "required_slots": [
+        {
+          "entity": "software_revision:3.2",
+          "predicate": "release_date",
+          "required": true,
+          "allowed_assertion_kinds": [
+            "stated"
+          ]
+        },
+        {
+          "entity": "software_revision:3.2",
+          "predicate": "change_summary",
+          "required": true,
+          "allowed_assertion_kinds": [
+            "stated"
+          ]
+        }
+      ],
+      "scope": {
+        "software_revision": {
+          "op": "==",
+          "value": "3.2"
+        },
+        "installed_sensor": "ANY",
+        "line": "ANY"
+      },
+      "expected_status": "ANSWERED",
+      "trap_types": [
+        "DATE_SOURCE_ONLY_IN_XLSX",
+        "ADJACENT_ROW_DISTRACTORS",
+        "VERSION_AS_TEXT_NOT_FLOAT"
+      ],
+      "expected_claims": [
+        {
+          "key": "rev32.date",
+          "entity": "software_revision:3.2",
+          "predicate": "release_date",
+          "value": "2025-09-30",
+          "scope": {
+            "software_revision": "ANY",
+            "installed_sensor": "ANY",
+            "line": "ANY"
+          },
+          "assertion_kind": "stated"
+        },
+        {
+          "key": "rev32.change",
+          "entity": "software_revision:3.2",
+          "predicate": "change_summary",
+          "value": "PS-04 replaced by PS-04A; normal HPU discharge pressure setpoint 180 -> 200 bar; see ECN-1042",
+          "scope": {
+            "software_revision": "ANY",
+            "installed_sensor": "ANY",
+            "line": "ANY"
+          },
+          "assertion_kind": "stated"
+        }
+      ],
+      "expected_evidence": [
+        {
+          "role": "primary",
+          "document": "reference/revision_history.xlsx",
+          "locator": {
+            "sheet": "Revision History",
+            "row_key": "3.2",
+            "column": "Release Date"
+          },
+          "check": {
+            "type": "xlsx_cell",
+            "sheet": "Revision History",
+            "key_col": "Software Revision",
+            "key": "3.2",
+            "col": "Release Date",
+            "equals": "2025-09-30"
+          },
+          "note": null
+        },
+        {
+          "role": "primary",
+          "document": "reference/revision_history.xlsx",
+          "locator": {
+            "sheet": "Revision History",
+            "row_key": "3.2",
+            "column": "Summary of Changes"
+          },
+          "check": {
+            "type": "xlsx_cell",
+            "sheet": "Revision History",
+            "key_col": "Software Revision",
+            "key": "3.2",
+            "col": "Summary of Changes",
+            "equals": "Pressure sensor PS-04 replaced by PS-04A. Normal HPU discharge pressure setpoint changed from 180 bar to 200 bar. See ECN-1042."
+          },
+          "note": null
+        },
+        {
+          "role": "distractor",
+          "document": "reference/revision_history.xlsx",
+          "locator": {
+            "sheet": "Revision History",
+            "row_key": "3.2.1",
+            "column": "Release Date"
+          },
+          "check": {
+            "type": "xlsx_cell",
+            "sheet": "Revision History",
+            "key_col": "Software Revision",
+            "key": "3.2.1",
+            "col": "Release Date",
+            "equals": "2025-11-18"
+          },
+          "note": "Documentation-only correction (ECN-1058)."
+        },
+        {
+          "role": "corroborating",
+          "document": "engineering_bulletins/ECN-1042.pdf",
+          "locator": {
+            "page": 1
+          },
+          "check": {
+            "type": "pdf_text",
+            "page": 1,
+            "quotes": [
+              "Effective: Software Revision 3.2"
+            ]
+          },
+          "note": "ECN-1042 carries no calendar date; the date exists only in the revision history."
+        }
+      ],
+      "required_values": [],
+      "gaps": [],
+      "must_mention": [
+        "2025-09-30",
+        "PS-04 -> PS-04A",
+        "180 -> 200 bar"
+      ],
+      "must_not_assert": [
+        "2025-11-18 as the 3.2 date",
+        "2026-04-07"
+      ],
+      "critical_errors": [
+        "Wrong date"
+      ],
+      "major_errors": [
+        "Omits sensor or setpoint change"
+      ],
+      "consistency_group": "pressure_ge_3.2",
+      "gold_answer_summary": "Software revision 3.2 took effect 2025-09-30. Alongside it: PS-04 was replaced by PS-04A and the normal HPU discharge pressure setpoint changed from 180 bar to 200 bar (ECN-1042).",
+      "reviewer_notes": null,
+      "reviewer_decision_ref": null
+    },
+    {
+      "question_id": "Q15",
+      "question_text": "What does sensor_ps04a_threshold_bar in the configuration export correspond to in the operator manual's terminology?",
+      "intent": "KEY_MAPPING",
+      "target_entities": [
+        "component:PS-04A"
+      ],
+      "required_slots": [
+        {
+          "entity": "component:PS-04A",
+          "predicate": "config_key_maps_to",
+          "required": true,
+          "allowed_assertion_kinds": [
+            "stated",
+            "inferred"
+          ]
+        }
+      ],
+      "scope": {
+        "software_revision": {
+          "op": ">=",
+          "value": "3.2"
+        },
+        "installed_sensor": "component:PS-04A",
+        "line": "ANY"
+      },
+      "expected_status": "ANSWERED",
+      "trap_types": [
+        "INFERRED_NOT_STATED",
+        "TERMINOLOGY_THRESHOLD_COLLISION",
+        "SIBLING_KEYS_ARE_ALARM_THRESHOLDS"
+      ],
+      "expected_claims": [
+        {
+          "key": "cfg.key.maps",
+          "entity": "config:sensor_ps04a_threshold_bar",
+          "predicate": "config_key_maps_to",
+          "value": "normal operating pressure (normal HPU discharge pressure setpoint) = 200 bar",
+          "scope": {
+            "software_revision": {
+              "op": ">=",
+              "value": "3.2"
+            },
+            "installed_sensor": "component:PS-04A",
+            "line": "ANY"
+          },
+          "assertion_kind": "inferred"
+        }
+      ],
+      "expected_evidence": [
+        {
+          "role": "primary",
+          "document": "configuration/configuration_export.json",
+          "locator": {
+            "json_path": "$.sensors.sensor_ps04a_threshold_bar"
+          },
+          "check": {
+            "type": "json_path",
+            "path": "sensors.sensor_ps04a_threshold_bar",
+            "equals": 200
+          },
+          "note": null
+        },
+        {
+          "role": "primary",
+          "document": "configuration/configuration_export.json",
+          "locator": {
+            "json_path": "$.revision_applicability.sensor_ps04a_threshold_bar.applies_from_firmware"
+          },
+          "check": {
+            "type": "json_path",
+            "path": "revision_applicability.sensor_ps04a_threshold_bar.applies_from_firmware",
+            "equals": "3.2"
+          },
+          "note": "Value and applicability match the manual's 200 bar / 3.2-and-later statement: basis of the inference."
+        },
+        {
+          "role": "primary",
+          "document": "manuals/operator_manual.pdf",
+          "locator": {
+            "page": 1
+          },
+          "check": {
+            "type": "pdf_text",
+            "page": 1,
+            "quotes": [
+              "Normal HPU discharge pressure is 200 bar on software revision 3.2 and later."
+            ]
+          },
+          "note": null
+        },
+        {
+          "role": "corroborating",
+          "document": "engineering_bulletins/ECN-1042.pdf",
+          "locator": {
+            "page": 1
+          },
+          "check": {
+            "type": "pdf_text",
+            "page": 1,
+            "quotes": [
+              "the normal HPU discharge pressure setpoint is revised from 180 bar to 200 bar."
+            ]
+          },
+          "note": null
+        },
+        {
+          "role": "distractor",
+          "document": "configuration/configuration_export.json",
+          "locator": {
+            "json_path": "$.sensors.sensor_ps04a_alarm_low_bar"
+          },
+          "check": {
+            "type": "json_path",
+            "path": "sensors.sensor_ps04a_alarm_low_bar",
+            "equals": 150
+          },
+          "note": "Sibling key = A17 low-pressure alarm threshold, NOT the operating pressure."
+        },
+        {
+          "role": "distractor",
+          "document": "configuration/configuration_export.json",
+          "locator": {
+            "json_path": "$.sensors.sensor_ps04a_alarm_high_bar"
+          },
+          "check": {
+            "type": "json_path",
+            "path": "sensors.sensor_ps04a_alarm_high_bar",
+            "equals": 220
+          },
+          "note": "Sibling key = A18 high-pressure alarm threshold."
+        }
+      ],
+      "required_values": [],
+      "gaps": [],
+      "must_mention": [
+        "normal operating pressure",
+        "200 bar",
+        "3.2",
+        "labelled as inferred"
+      ],
+      "must_not_assert": [
+        "maps to the A17 150 bar alarm threshold"
+      ],
+      "critical_errors": [
+        "Maps to an alarm threshold (150/220)",
+        "Presents the mapping as explicitly stated"
+      ],
+      "major_errors": [
+        "Omits the revision applicability"
+      ],
+      "consistency_group": "pressure_ge_3.2",
+      "gold_answer_summary": "It corresponds to the manual's normal operating (discharge) pressure for PS-04A: 200 bar, applicable from software revision 3.2. This is an inference (no document defines the key name): the value and the 3.2 applicability match the manual and ECN-1042. The '_alarm_low_bar' (150) and '_alarm_high_bar' (220) keys are the A17/A18 alarm thresholds, not this.",
+      "reviewer_notes": null,
+      "reviewer_decision_ref": "D6"
+    },
+    {
+      "question_id": "Q16",
+      "question_text": "Does the 200 bar threshold apply to all Aegis HCS units, or only some?",
+      "intent": "SCOPE_QUERY",
+      "target_entities": [
+        "component:HPU",
+        "component:PS-04A"
+      ],
+      "required_slots": [
+        {
+          "entity": "component:HPU",
+          "predicate": "applicability_scope",
+          "required": true,
+          "allowed_assertion_kinds": [
+            "stated"
+          ]
+        }
+      ],
+      "scope": {
+        "software_revision": "ANY",
+        "installed_sensor": "ANY",
+        "line": "ANY"
+      },
+      "expected_status": "ANSWERED_SCOPED",
+      "trap_types": [
+        "VERSION_SCOPE",
+        "RATIONALE_VS_SCOPE_CONDITION",
+        "PARTIAL_UNKNOWN_RESIDUAL"
+      ],
+      "expected_claims": [
+        {
+          "key": "pressure200.scope",
+          "entity": "component:HPU",
+          "predicate": "applicability_scope",
+          "value": "only units on software revision >=3.2 with PS-04A; units <3.2 use 180 bar with PS-04",
+          "scope": {
+            "software_revision": {
+              "op": ">=",
+              "value": "3.2"
+            },
+            "installed_sensor": "component:PS-04A",
+            "line": "ANY"
+          },
+          "assertion_kind": "stated"
+        }
+      ],
+      "expected_evidence": [
+        {
+          "role": "primary",
+          "document": "manuals/operator_manual.pdf",
+          "locator": {
+            "page": 1
+          },
+          "check": {
+            "type": "pdf_text",
+            "page": 1,
+            "quotes": [
+              "Applies to software revision 3.2 and later",
+              "Normal HPU discharge pressure is 200 bar on software revision 3.2 and later."
+            ]
+          },
+          "note": null
+        },
+        {
+          "role": "primary",
+          "document": "engineering_bulletins/ECN-1042.pdf",
+          "locator": {
+            "page": 1
+          },
+          "check": {
+            "type": "pdf_text",
+            "page": 1,
+            "quotes": [
+              "Effective software revision 3.2, pressure sensor PS-04 is replaced by pressure sensor PS-04A",
+              "Do not install PS-04A on a controller running firmware older than 3.2."
+            ]
+          },
+          "note": null
+        },
+        {
+          "role": "corroborating",
+          "document": "configuration/configuration_export.json",
+          "locator": {
+            "json_path": "$.revision_applicability.sensor_ps04a_threshold_bar.applies_from_firmware"
+          },
+          "check": {
+            "type": "json_path",
+            "path": "revision_applicability.sensor_ps04a_threshold_bar.applies_from_firmware",
+            "equals": "3.2"
+          },
+          "note": null
+        },
+        {
+          "role": "corroborating",
+          "document": "configuration/configuration_export.json",
+          "locator": {
+            "json_path": "$.revision_applicability.sensor_ps04_legacy_threshold_bar.applies_before_firmware"
+          },
+          "check": {
+            "type": "json_path",
+            "path": "revision_applicability.sensor_ps04_legacy_threshold_bar.applies_before_firmware",
+            "equals": "3.2"
+          },
+          "note": null
+        },
+        {
+          "role": "rationale_not_scope",
+          "document": "engineering_bulletins/ECN-1042.pdf",
+          "locator": {
+            "page": 1
+          },
+          "check": {
+            "type": "pdf_text",
+            "page": 1,
+            "quotes": [
+              "the higher setpoint improves press cycle time on Series-7 units manufactured after 2024"
+            ]
+          },
+          "note": null
+        },
+        {
+          "role": "advisory",
+          "document": "low_trust/site_survey_notes.docx",
+          "locator": {},
+          "check": {
+            "type": "docx_text",
+            "quotes": [
+              "Also didn't get a chance to check what software revision the controller is running on this line"
+            ]
+          },
+          "note": "Line 4 unit with a swapped sensor and unknown revision: cannot be assigned to either branch."
+        }
+      ],
+      "required_values": [],
+      "gaps": [
+        "Whether manufacture date independently restricts applicability is not stated."
+      ],
+      "must_mention": [
+        "only units on software revision 3.2 or later",
+        "180 bar before 3.2"
+      ],
+      "must_not_assert": [
+        "applies to all units"
+      ],
+      "critical_errors": [
+        "Says it applies to all units"
+      ],
+      "major_errors": [
+        "Makes manufacture-date a hard scope condition without flagging it as unstated"
+      ],
+      "consistency_group": "pressure_ge_3.2",
+      "gold_answer_summary": "Only some: it applies to units running software revision 3.2 or later (with PS-04A). Units on revisions before 3.2 keep the 180 bar setpoint with PS-04, and PS-04A must not be installed on pre-3.2 firmware. ECN-1042 also says the higher setpoint improves cycle time on units manufactured after 2024; it states this as a rationale and the corpus does not say whether manufacture date independently restricts applicability.",
+      "reviewer_notes": null,
+      "reviewer_decision_ref": "D3"
+    },
+    {
+      "question_id": "Q17",
+      "question_text": "Is PS-04 the same as PS-40?",
+      "intent": "IDENTITY_NEGATIVE",
+      "target_entities": [
+        "component:PS-04",
+        "component:PS-40"
+      ],
+      "required_slots": [
+        {
+          "entity": "component:PS-40",
+          "predicate": "is_distinct_from",
+          "required": true,
+          "allowed_assertion_kinds": [
+            "stated"
+          ]
+        }
+      ],
+      "scope": {
+        "software_revision": "ANY",
+        "installed_sensor": "ANY",
+        "line": "ANY"
+      },
+      "expected_status": "ANSWERED",
+      "trap_types": [
+        "LEXICAL_NEAR_MATCH",
+        "EDIT_DISTANCE_TRAP"
+      ],
+      "expected_claims": [
+        {
+          "key": "ps40.distinct",
+          "entity": "component:PS-40",
+          "predicate": "is_distinct_from",
+          "value": "component:PS-04 / PS-04A (coolant loop, Skid B)",
+          "scope": {
+            "software_revision": "ANY",
+            "installed_sensor": "ANY",
+            "line": "ANY"
+          },
+          "assertion_kind": "stated"
+        }
+      ],
+      "expected_evidence": [
+        {
+          "role": "primary",
+          "document": "reference/component_register.xlsx",
+          "locator": {
+            "sheet": "Components",
+            "row_key": "PS-40",
+            "column": "Location"
+          },
+          "check": {
+            "type": "xlsx_cell",
+            "sheet": "Components",
+            "key_col": "Component ID (as printed)",
+            "key": "PS-40",
+            "col": "Location",
+            "equals": "Coolant Loop, Skid B"
+          },
+          "note": null
+        },
+        {
+          "role": "primary",
+          "document": "reference/component_register.xlsx",
+          "locator": {
+            "sheet": "Components",
+            "row_key": "PS-40",
+            "column": "Notes"
+          },
+          "check": {
+            "type": "xlsx_cell",
+            "sheet": "Components",
+            "key_col": "Component ID (as printed)",
+            "key": "PS-40",
+            "col": "Notes",
+            "contains": "NOT related to the HPU discharge circuit"
+          },
+          "note": null
+        },
+        {
+          "role": "corroborating",
+          "document": "configuration/configuration_export.json",
+          "locator": {
+            "json_path": "$.sensors.sensor_ps40_note"
+          },
+          "check": {
+            "type": "json_path",
+            "path": "sensors.sensor_ps40_note",
+            "equals": "unrelated to HPU discharge circuit; do not map to sensor_ps04a_* keys"
+          },
+          "note": null
+        },
+        {
+          "role": "corroborating",
+          "document": "reference/component_register.xlsx",
+          "locator": {
+            "sheet": "Components",
+            "row_key": "PS-04",
+            "column": "Location"
+          },
+          "check": {
+            "type": "xlsx_cell",
+            "sheet": "Components",
+            "key_col": "Component ID (as printed)",
+            "key": "PS-04",
+            "col": "Location",
+            "equals": "HPU discharge line"
+          },
+          "note": null
+        }
+      ],
+      "required_values": [],
+      "gaps": [],
+      "must_mention": [
+        "not the same",
+        "PS-40 is on the coolant loop"
+      ],
+      "must_not_assert": [],
+      "critical_errors": [
+        "Says they are the same / merges aliases"
+      ],
+      "major_errors": [],
+      "consistency_group": "identity",
+      "gold_answer_summary": "No. PS-40 is a different pressure sensor on the Coolant Loop (Skid B), unrelated to the HPU discharge circuit; PS-04 was the (now superseded) HPU discharge sensor. The register explicitly warns not to confuse them.",
+      "reviewer_notes": null,
+      "reviewer_decision_ref": null
+    },
+    {
+      "question_id": "Q18",
+      "question_text": "What was the pressure limit before revision 3.2?",
+      "intent": "PARAMETER_HISTORY_AMBIGUOUS_TERM",
+      "target_entities": [
+        "component:HPU",
+        "component:PS-04"
+      ],
+      "required_slots": [
+        {
+          "entity": "component:HPU",
+          "predicate": "normal_operating_pressure",
+          "required": true,
+          "allowed_assertion_kinds": [
+            "stated"
+          ]
+        }
+      ],
+      "scope": {
+        "software_revision": {
+          "op": "<",
+          "value": "3.2"
+        },
+        "installed_sensor": "component:PS-04",
+        "line": "ANY"
+      },
+      "expected_status": "ANSWERED",
+      "trap_types": [
+        "VERSION_SCOPE",
+        "TERMINOLOGY_LIMIT_VS_SETPOINT",
+        "DUPLICATE_OF_Q9_CONSISTENCY"
+      ],
+      "expected_claims": [
+        {
+          "key": "hpu.normal_pressure.lt32",
+          "entity": "component:HPU",
+          "predicate": "normal_operating_pressure",
+          "value": 180,
+          "scope": {
+            "software_revision": {
+              "op": "<",
+              "value": "3.2"
+            },
+            "installed_sensor": "component:PS-04",
+            "line": "ANY"
+          },
+          "assertion_kind": "stated",
+          "unit": "bar"
+        }
+      ],
+      "expected_evidence": [
+        {
+          "role": "primary",
+          "document": "manuals/operator_manual.pdf",
+          "locator": {
+            "page": 1
+          },
+          "check": {
+            "type": "pdf_text",
+            "page": 1,
+            "quotes": [
+              "normal discharge pressure was 180 bar, measured by the original PS-04 sensor."
+            ]
+          },
+          "note": null
+        },
+        {
+          "role": "primary",
+          "document": "engineering_bulletins/ECN-1042.pdf",
+          "locator": {
+            "page": 1
+          },
+          "check": {
+            "type": "pdf_text",
+            "page": 1,
+            "quotes": [
+              "the normal HPU discharge pressure setpoint is revised from 180 bar to 200 bar."
+            ]
+          },
+          "note": null
+        },
+        {
+          "role": "corroborating",
+          "document": "configuration/configuration_export.json",
+          "locator": {
+            "json_path": "$.revision_applicability.sensor_ps04_legacy_threshold_bar.value"
+          },
+          "check": {
+            "type": "json_path",
+            "path": "revision_applicability.sensor_ps04_legacy_threshold_bar.value",
+            "equals": 180
+          },
+          "note": null
+        },
+        {
+          "role": "distractor",
+          "document": "reference/alarm_reference.pdf",
+          "locator": {
+            "page": 1
+          },
+          "check": {
+            "type": "pdf_text",
+            "page": 1,
+            "quotes": [
+              "The 150 bar and 220 bar thresholds shown above are unchanged by ECN-1058."
+            ]
+          },
+          "note": "Alarm thresholds, a different parameter; the corpus gives no pre-3.2 alarm thresholds."
+        }
+      ],
+      "required_values": [
+        {
+          "value": 180,
+          "unit": "bar",
+          "scope": "<3.2"
+        }
+      ],
+      "gaps": [],
+      "must_mention": [
+        "180 bar",
+        "before 3.2"
+      ],
+      "must_not_assert": [
+        "200 bar",
+        "175 bar"
+      ],
+      "critical_errors": [
+        "Answers 200 bar or 175 bar"
+      ],
+      "major_errors": [
+        "Does not disambiguate setpoint vs alarm limits"
+      ],
+      "consistency_group": "pressure_lt_3.2",
+      "gold_answer_summary": "180 bar: the normal HPU discharge operating pressure (setpoint) before revision 3.2 (PS-04). If 'limit' is read as the A17/A18 alarm limits (150/220 bar), the corpus does not give different pre-3.2 values.",
+      "reviewer_notes": null,
+      "reviewer_decision_ref": "D4"
+    },
+    {
+      "question_id": "Q19",
+      "question_text": "What is the maximum continuous operating temperature of PS-04A?",
+      "intent": "PARAMETER_QUERY",
+      "target_entities": [
+        "component:PS-04A"
+      ],
+      "required_slots": [
+        {
+          "entity": "component:PS-04A",
+          "predicate": "max_operating_temperature",
+          "required": true,
+          "allowed_assertion_kinds": [
+            "stated"
+          ]
+        }
+      ],
+      "scope": {
+        "software_revision": "ANY",
+        "installed_sensor": "ANY",
+        "line": "ANY"
+      },
+      "expected_status": "UNANSWERABLE",
+      "trap_types": [
+        "MISSING_ENTITY_ATTRIBUTE",
+        "WRONG_ENTITY_NUMERIC_DISTRACTOR_SDS"
+      ],
+      "expected_claims": [],
+      "expected_evidence": [
+        {
+          "role": "checked_no_fact",
+          "document": "*text-layer sources*",
+          "locator": {},
+          "check": {
+            "type": "absence",
+            "patterns": [
+              "temperature",
+              "°C"
+            ],
+            "allowed_in": [
+              "noise/safety_data_sheet_hydraulic_fluid.pdf"
+            ]
+          },
+          "note": "No text-layer document other than the fluid SDS mentions temperature."
+        },
+        {
+          "role": "disregard_wrong_entity",
+          "document": "noise/safety_data_sheet_hydraulic_fluid.pdf",
+          "locator": {
+            "page": 1
+          },
+          "check": {
+            "type": "pdf_text",
+            "page": 1,
+            "quotes": [
+              "approximately 210°C",
+              "Pour point: -33°C"
+            ]
+          },
+          "note": "Fluid flash/pour points, not a sensor rating."
+        },
+        {
+          "role": "checked_no_fact",
+          "document": "scans/scanned_appendix_calibration.pdf",
+          "locator": {
+            "region": "Calibration record: points/results only; no temperature rating"
+          },
+          "check": {
+            "type": "manual_visual",
+            "observed": "Calibration record: points/results only; no temperature rating"
+          },
+          "note": null
+        }
+      ],
+      "required_values": [],
+      "gaps": [
+        "max_operating_temperature(PS-04A)"
+      ],
+      "must_mention": [
+        "not found",
+        "where searched"
+      ],
+      "must_not_assert": [
+        "210°C",
+        "-33°C as the sensor rating"
+      ],
+      "critical_errors": [
+        "Gives any temperature as the sensor rating"
+      ],
+      "major_errors": [],
+      "consistency_group": "abstain",
+      "gold_answer_summary": "Not stated in the corpus. The only temperatures present (flash point ~210°C, pour point -33°C) belong to the hydraulic fluid in the safety data sheet, not to PS-04A.",
+      "reviewer_notes": null,
+      "reviewer_decision_ref": null
+    },
+    {
+      "question_id": "Q20",
+      "question_text": "What is the calibration interval for the electrical system diagram's voltage sensor?",
+      "intent": "PARAMETER_QUERY",
+      "target_entities": [
+        "diagram:AEG-DWG-E02"
+      ],
+      "required_slots": [
+        {
+          "entity": "component:voltage_sensor",
+          "predicate": "calibration_interval",
+          "required": true,
+          "allowed_assertion_kinds": [
+            "stated"
+          ]
+        }
+      ],
+      "scope": {
+        "software_revision": "ANY",
+        "installed_sensor": "ANY",
+        "line": "ANY"
+      },
+      "expected_status": "UNANSWERABLE",
+      "trap_types": [
+        "FALSE_PREMISE",
+        "MISSING_ENTITY",
+        "ADJACENT_ENTITY_DISTRACTORS",
+        "LOW_CONTRAST_ROTATED_LABEL"
+      ],
+      "expected_claims": [],
+      "expected_evidence": [
+        {
+          "role": "primary",
+          "document": "diagrams/system_diagram_electrical.png",
+          "locator": {
+            "region": "Nodes: Main Disconnect Q1; Control XFMR T1 480:120V; PLC-03 24VDC Power Supply; PLC-03 I/O Rack; E-Stop Safety Relay KA1; Sensor Loop Power 24VDC; IV-21 Valve Driver; faint rotated label 'TB-7 REF: PRESSURE XDCR LOOP'. No voltage sensor."
+          },
+          "check": {
+            "type": "manual_visual",
+            "observed": "Nodes: Main Disconnect Q1; Control XFMR T1 480:120V; PLC-03 24VDC Power Supply; PLC-03 I/O Rack; E-Stop Safety Relay KA1; Sensor Loop Power 24VDC; IV-21 Valve Driver; faint rotated label 'TB-7 REF: PRESSURE XDCR LOOP'. No voltage sensor."
+          },
+          "note": null
+        },
+        {
+          "role": "checked_no_fact",
+          "document": "scans/scanned_appendix_calibration.pdf",
+          "locator": {
+            "region": "Appendix C: 'No calibration interval is specified for PS-04A on this form...maintenance schedule...not included in this binder.'"
+          },
+          "check": {
+            "type": "manual_visual",
+            "observed": "Appendix C: 'No calibration interval is specified for PS-04A on this form...maintenance schedule...not included in this binder.'"
+          },
+          "note": "Related but different entity: not an answer."
+        },
+        {
+          "role": "checked_no_fact",
+          "document": "*text-layer sources*",
+          "locator": {},
+          "check": {
+            "type": "absence",
+            "patterns": [
+              "voltage sensor",
+              "calibration interval"
+            ],
+            "allowed_in": []
+          },
+          "note": "Text-layer sources."
+        }
+      ],
+      "required_values": [],
+      "gaps": [
+        "voltage sensor entity",
+        "calibration_interval"
+      ],
+      "must_mention": [
+        "no voltage sensor shown",
+        "no interval specified anywhere"
+      ],
+      "must_not_assert": [
+        "a calibration interval",
+        "using PS-04A's calibration date 2026-01-09 as an interval"
+      ],
+      "critical_errors": [
+        "States an interval",
+        "Treats a 24VDC supply as a voltage sensor"
+      ],
+      "major_errors": [],
+      "consistency_group": "abstain",
+      "gold_answer_summary": "Cannot be answered: the electrical schematic (AEG-DWG-E02) shows no voltage sensor (its '24VDC' items are power supplies, not sensors), and no document gives a calibration interval. The only calibration record is for PS-04A and itself says no interval is specified.",
+      "reviewer_notes": null,
+      "reviewer_decision_ref": null
+    },
+    {
+      "question_id": "Q21",
+      "question_text": "Who approved engineering bulletin ECN-1058?",
+      "intent": "FIELD_LOOKUP",
+      "target_entities": [
+        "document:ECN-1058"
+      ],
+      "required_slots": [
+        {
+          "entity": "document:ECN-1058",
+          "predicate": "approver",
+          "required": true,
+          "allowed_assertion_kinds": [
+            "stated"
+          ]
+        }
+      ],
+      "scope": {
+        "software_revision": "ANY",
+        "installed_sensor": "ANY",
+        "line": "ANY"
+      },
+      "expected_status": "UNANSWERABLE",
+      "trap_types": [
+        "MISSING_FIELD",
+        "STATUS_IS_NOT_APPROVER",
+        "PERSON_NAMES_PRESENT_ELSEWHERE"
+      ],
+      "expected_claims": [],
+      "expected_evidence": [
+        {
+          "role": "checked_no_fact",
+          "document": "engineering_bulletins/ECN-1058.pdf",
+          "locator": {
+            "page": 1
+          },
+          "check": {
+            "type": "pdf_text",
+            "page": 1,
+            "quotes": [
+              "ECN Number:",
+              "Title:",
+              "Effective:",
+              "References:",
+              "Status:"
+            ]
+          },
+          "note": "Header fields present: none is an approver. 'Status: Released' is not an approval record."
+        },
+        {
+          "role": "checked_no_fact",
+          "document": "*text-layer sources*",
+          "locator": {},
+          "check": {
+            "type": "absence",
+            "patterns": [
+              "approv(ed|er|al)\\s+by",
+              "signed\\s+off",
+              "authori[sz]ed\\s+by"
+            ],
+            "allowed_in": []
+          },
+          "note": "Text-layer sources."
+        },
+        {
+          "role": "distractor",
+          "document": "reference/terminology_glossary.docx",
+          "locator": {},
+          "check": {
+            "type": "docx_text",
+            "quotes": [
+              "A controlled document describing an approved change to equipment, software, or documentation."
+            ]
+          },
+          "note": "Generic ECN definition, not an approval record for ECN-1058."
+        }
+      ],
+      "required_values": [],
+      "gaps": [
+        "approver(ECN-1058)"
+      ],
+      "must_mention": [
+        "no approver recorded"
+      ],
+      "must_not_assert": [
+        "R. Okafor",
+        "J. Torres",
+        "any person as approver"
+      ],
+      "critical_errors": [
+        "Names any person or role as approver"
+      ],
+      "major_errors": [],
+      "consistency_group": "abstain",
+      "gold_answer_summary": "Not stated. ECN-1058 lists number, title, effective date ('Immediately upon publication'), reference to ECN-1042 and status 'Released', but no approver. Names that do appear in the corpus (R. Okafor, technician on the calibration record; J. Torres, field-service note author) are unrelated to ECN approval.",
+      "reviewer_notes": null,
+      "reviewer_decision_ref": null
+    },
+    {
+      "question_id": "Q22",
+      "question_text": "What is the mean time between failures for the isolation valve IV-21?",
+      "intent": "PARAMETER_QUERY",
+      "target_entities": [
+        "component:IV-21"
+      ],
+      "required_slots": [
+        {
+          "entity": "component:IV-21",
+          "predicate": "mtbf",
+          "required": true,
+          "allowed_assertion_kinds": [
+            "stated"
+          ]
+        }
+      ],
+      "scope": {
+        "software_revision": "ANY",
+        "installed_sensor": "ANY",
+        "line": "ANY"
+      },
+      "expected_status": "UNANSWERABLE",
+      "trap_types": [
+        "MISSING_ENTITY_ATTRIBUTE",
+        "DISTRACTOR_RELIABILITY_FIGURE"
+      ],
+      "expected_claims": [],
+      "expected_evidence": [
+        {
+          "role": "checked_no_fact",
+          "document": "*text-layer sources*",
+          "locator": {},
+          "check": {
+            "type": "absence",
+            "patterns": [
+              "MTBF",
+              "mean\\s+time\\s+between",
+              "failure\\s+rate"
+            ],
+            "allowed_in": []
+          },
+          "note": "No reliability figure anywhere in text-layer sources."
+        },
+        {
+          "role": "disregard_wrong_entity",
+          "document": "engineering_bulletins/ECN-1042.pdf",
+          "locator": {
+            "page": 1
+          },
+          "check": {
+            "type": "pdf_text",
+            "page": 1,
+            "quotes": [
+              "approximately 18 months of continuous service"
+            ]
+          },
+          "note": "PS-04 sensor drift interval, not IV-21 MTBF."
+        }
+      ],
+      "required_values": [],
+      "gaps": [
+        "mtbf(IV-21)"
+      ],
+      "must_mention": [
+        "not found"
+      ],
+      "must_not_assert": [
+        "18 months as MTBF",
+        "any number"
+      ],
+      "critical_errors": [
+        "States an MTBF"
+      ],
+      "major_errors": [],
+      "consistency_group": "abstain",
+      "gold_answer_summary": "Not stated. No document gives an MTBF (or any reliability figure) for IV-21 or any other component. The 18-month figure in ECN-1042 is PS-04 signal-drift service life, not valve MTBF.",
+      "reviewer_notes": null,
+      "reviewer_decision_ref": null
+    },
+    {
+      "question_id": "Q23",
+      "question_text": "Is the Aegis Series-7 HCS compatible with a 3-phase 400V supply?",
+      "intent": "COMPATIBILITY_QUERY",
+      "target_entities": [
+        "component:Q1",
+        "component:T1"
+      ],
+      "required_slots": [
+        {
+          "entity": "system:Aegis Series-7 HCS",
+          "predicate": "supply_voltage",
+          "required": true,
+          "allowed_assertion_kinds": [
+            "stated"
+          ]
+        },
+        {
+          "entity": "system:Aegis Series-7 HCS",
+          "predicate": "supply_phase",
+          "required": true,
+          "allowed_assertion_kinds": [
+            "stated"
+          ]
+        },
+        {
+          "entity": "system:Aegis Series-7 HCS",
+          "predicate": "supply_compatibility",
+          "required": true,
+          "allowed_assertion_kinds": [
+            "stated"
+          ]
+        }
+      ],
+      "scope": {
+        "software_revision": "ANY",
+        "installed_sensor": "ANY",
+        "line": "ANY"
+      },
+      "expected_status": "PARTIAL",
+      "trap_types": [
+        "PARTIAL_EVIDENCE_NOT_EMPTY_RETRIEVAL",
+        "NO_INFERENCE_FROM_NEAR_NUMBERS",
+        "MISSING_ATTRIBUTE"
+      ],
+      "expected_claims": [
+        {
+          "key": "q1.incoming",
+          "entity": "component:Q1",
+          "predicate": "supply_voltage",
+          "value": "480 V incoming disconnect",
+          "scope": {
+            "software_revision": "ANY",
+            "installed_sensor": "ANY",
+            "line": "ANY"
+          },
+          "assertion_kind": "stated",
+          "unit": "V"
+        },
+        {
+          "key": "t1.ratio",
+          "entity": "component:T1",
+          "predicate": "supply_voltage",
+          "value": "480:120 V control transformer",
+          "scope": {
+            "software_revision": "ANY",
+            "installed_sensor": "ANY",
+            "line": "ANY"
+          },
+          "assertion_kind": "stated"
+        }
+      ],
+      "expected_evidence": [
+        {
+          "role": "primary",
+          "document": "reference/component_register.xlsx",
+          "locator": {
+            "sheet": "Components",
+            "row_key": "Q1",
+            "column": "Notes"
+          },
+          "check": {
+            "type": "xlsx_cell",
+            "sheet": "Components",
+            "key_col": "Component ID (as printed)",
+            "key": "Q1",
+            "col": "Notes",
+            "equals": "480V incoming disconnect."
+          },
+          "note": null
+        },
+        {
+          "role": "primary",
+          "document": "reference/component_register.xlsx",
+          "locator": {
+            "sheet": "Components",
+            "row_key": "T1",
+            "column": "Notes"
+          },
+          "check": {
+            "type": "xlsx_cell",
+            "sheet": "Components",
+            "key_col": "Component ID (as printed)",
+            "key": "T1",
+            "col": "Notes",
+            "equals": "480:120V control power."
+          },
+          "note": null
+        },
+        {
+          "role": "corroborating",
+          "document": "diagrams/system_diagram_electrical.png",
+          "locator": {
+            "region": "Control XFMR T1 480:120V; Main Disconnect Q1"
+          },
+          "check": {
+            "type": "manual_visual",
+            "observed": "Control XFMR T1 480:120V; Main Disconnect Q1"
+          },
+          "note": null
+        },
+        {
+          "role": "checked_no_fact",
+          "document": "*text-layer sources*",
+          "locator": {},
+          "check": {
+            "type": "absence",
+            "patterns": [
+              "400\\s*V",
+              "3-?\\s*phase",
+              "three-?\\s*phase",
+              "\\bphase\\b"
+            ],
+            "allowed_in": []
+          },
+          "note": "No text-layer statement of phase count or 400 V."
+        }
+      ],
+      "required_values": [],
+      "gaps": [
+        "supply_phase",
+        "400 V compatibility"
+      ],
+      "must_mention": [
+        "documented incoming supply is 480V",
+        "no 400V or phase statement",
+        "compatibility not determinable"
+      ],
+      "must_not_assert": [
+        "yes, compatible",
+        "no, incompatible"
+      ],
+      "critical_errors": [
+        "Asserts compatible or incompatible"
+      ],
+      "major_errors": [
+        "Returns only 'unknown' without reporting the 480V facts"
+      ],
+      "consistency_group": "abstain",
+      "gold_answer_summary": "Cannot be determined. The corpus documents a 480V incoming disconnect (Q1) and a 480:120V control transformer (T1), but never states the phase count, a 400V rating, or any supply-compatibility range. Do not infer incompatibility from 480 != 400, nor compatibility from an assumed 3-phase supply.",
+      "reviewer_notes": "Retrieval is NOT empty here (480V claims exist). This is why abstention is slot-coverage based, not empty-retrieval based.",
+      "reviewer_decision_ref": "D5"
+    }
+  ]
+}

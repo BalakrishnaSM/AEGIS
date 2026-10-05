@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Aegis knowledge engine</title><link rel="stylesheet" href="styles.css"></head>
+<body>
+<header><h1>Aegis knowledge engine</h1><div id="chips"></div></header>
+<main>
+  <section id="ask">
+    <form id="f"><input id="q" type="text" maxlength="600" placeholder="Ask about the Aegis Series-7 HCS…" autocomplete="off" aria-label="Question" required>
+      <button id="go" type="submit">Ask</button></form>
+    <div class="row"><select id="ex" aria-label="Example questions"><option value="">Official evaluation questions…</option></select>
+      <input id="key" type="password" placeholder="API key" hidden aria-label="API key"></div>
+    <p id="err" role="alert" hidden></p>
+  </section>
+  <div id="out" hidden>
+    <div class="panes">
+      <section aria-labelledby="h1"><h2 id="h1">Answer</h2><div id="status"></div><div id="answer"></div></section>
+      <section aria-labelledby="h2"><h2 id="h2">Claims and evidence</h2><div id="claims"></div><div id="evidence"></div></section>
+      <section aria-labelledby="h3"><h2 id="h3">Assumptions, conflicts, gaps, advisories</h2><div id="notes"></div></section>
+    </div>
+    <section aria-labelledby="h4"><h2 id="h4">Why this answer</h2><div id="why"></div><p id="meta" class="muted"></p></section>
+  </div>
+</main>
+<script src="app.js"></script>
+</body></html>

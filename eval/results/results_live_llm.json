@@ -1,0 +1,166 @@
+{
+ "mode": "live",
+ "llm_stats": {
+  "calls": 0,
+  "cache_hits": 0,
+  "failures": 10,
+  "input_tokens": 0,
+  "output_tokens": 0,
+  "cache_read_tokens": 0,
+  "est_cost": null,
+  "breaker": "open",
+  "models": [
+   "claude-sonnet-5-5",
+   "claude-haiku-4-5-20251001"
+  ]
+ },
+ "ingest": {
+  "llm_extract": {
+   "elements_sent": 9,
+   "claims_proposed": 0
+  },
+  "dual_extraction": {
+   "agree": 0,
+   "disagree": 0,
+   "llm_only": 0,
+   "rule_only": 0
+  },
+  "claims": {
+   "ADMITTED": 0,
+   "DEMOTED": 0,
+   "REJECTED": 0
+  }
+ },
+ "official": {
+  "deterministic": {
+   "status_exact": 23,
+   "critical_items": 0,
+   "major_items": 0
+  },
+  "llm": {
+   "status_exact": 4,
+   "critical_items": 0,
+   "major_items": 19
+  },
+  "status_regressions": [
+   "Q1",
+   "Q2",
+   "Q3",
+   "Q4",
+   "Q5",
+   "Q6",
+   "Q7",
+   "Q8",
+   "Q9",
+   "Q10",
+   "Q11",
+   "Q12",
+   "Q13",
+   "Q14",
+   "Q15",
+   "Q16",
+   "Q17",
+   "Q18",
+   "Q23"
+  ]
+ },
+ "heldout": {
+  "deterministic": {
+   "status_exact": 24,
+   "critical_items": 0,
+   "major_items": 10
+  },
+  "llm": {
+   "status_exact": 7,
+   "critical_items": 0,
+   "major_items": 27
+  },
+  "status_changes": [
+   [
+    "H02",
+    "ANSWERED",
+    "UNANSWERABLE"
+   ],
+   [
+    "H04",
+    "ANSWERED",
+    "UNANSWERABLE"
+   ],
+   [
+    "H05",
+    "ANSWERED",
+    "UNANSWERABLE"
+   ],
+   [
+    "H06",
+    "ANSWERED",
+    "UNANSWERABLE"
+   ],
+   [
+    "H07",
+    "ANSWERED",
+    "UNANSWERABLE"
+   ],
+   [
+    "H08",
+    "ANSWERED",
+    "UNANSWERABLE"
+   ],
+   [
+    "H15",
+    "ANSWERED_SCOPED",
+    "UNANSWERABLE"
+   ],
+   [
+    "H16",
+    "ANSWERED_SCOPED",
+    "UNANSWERABLE"
+   ],
+   [
+    "H17",
+    "ANSWERED_SCOPED",
+    "UNANSWERABLE"
+   ],
+   [
+    "H18",
+    "ANSWERED",
+    "UNANSWERABLE"
+   ],
+   [
+    "H25",
+    "ANSWERED",
+    "UNANSWERABLE"
+   ],
+   [
+    "H27",
+    "ANSWERED",
+    "UNANSWERABLE"
+   ],
+   [
+    "H30",
+    "ANSWERED_SCOPED",
+    "UNANSWERABLE"
+   ],
+   [
+    "H31",
+    "ANSWERED",
+    "UNANSWERABLE"
+   ],
+   [
+    "H32",
+    "ANSWERED",
+    "UNANSWERABLE"
+   ],
+   [
+    "H34",
+    "ANSWERED",
+    "UNANSWERABLE"
+   ],
+   [
+    "H35",
+    "ANSWERED_SCOPED",
+    "UNANSWERABLE"
+   ]
+  ]
+ }
+}

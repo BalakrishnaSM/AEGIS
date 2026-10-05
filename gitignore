@@ -1,0 +1,80 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyo
+*.pyd
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# Packaging
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# Test / coverage
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+.nox/
+.mypy_cache/
+.ruff_cache/
+
+# Environment / secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# IDEs / editors
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Logs
+*.log
+logs/
+
+# Runtime / temporary files
+tmp/
+temp/
+*.tmp
+*.bak
+
+# Local databases generated during development
+*.db-journal
+*.db-wal
+*.db-shm
+
+# Evaluation outputs / local caches
+eval/results/
+eval/cache/
+results/
+.cache/
+
+# Python bytecode accidentally generated outside __pycache__
+*.pyc
+
+# Local model/cache directories
+models/
+model_cache/
+hf_cache/
+
+# Do not commit local API credentials
+anthropic_api_key.txt
+openai_api_key.txt
+secrets/

@@ -1,0 +1,23 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "aegis-knowledge-engine"
+version = "1.0.0"
+description = "Claim-centric, scope-aware, provenance-first knowledge ingestion and answering"
+requires-python = ">=3.11"
+dependencies = ["pydantic>=2.5", "pdfplumber", "openpyxl", "python-docx", "python-pptx", "pint", "rank_bm25", "opencv-python-headless", "pytesseract", "numpy", "tenacity", "anthropic", "fastapi", "uvicorn[standard]"]
+
+[project.scripts]
+aegis = "aegis.__main__:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+aegis = ["web/*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+filterwarnings = ["ignore::DeprecationWarning"]

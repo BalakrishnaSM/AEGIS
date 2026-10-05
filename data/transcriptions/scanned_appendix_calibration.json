@@ -1,0 +1,101 @@
+{
+ "source": "scans/scanned_appendix_calibration.pdf",
+ "sha256": "0e1548824546ac94a881a0295c21fcf615a4e3b45993c571c291a3e5e70572cd",
+ "reader": "assistant-transcription (unreviewed; VLM stand-in)",
+ "reviewed": false,
+ "regions": [
+  {
+   "id": "r1",
+   "text": "Sensor Tag: PS-04A Location: HPU discharge line Calibration Date: 2026-01-09 Technician: R. Okafor"
+  },
+  {
+   "id": "r2",
+   "text": "Zero (0%) 0 bar 0.1 bar PASS Mid (50%) 100 bar 99.6 bar PASS Span (100%) 200 bar 199.4 bar PASS"
+  },
+  {
+   "id": "r3",
+   "text": "Note: this calibration record supersedes the field data sheet used prior to the PS-04 to PS-04A sensor change (see ECN-1042). Span reference target is 200 bar, consistent with the software revision 3.2 operating pressure setpoint."
+  },
+  {
+   "id": "r4",
+   "text": "Prior sensor (PS-04) span reference target was 180 bar — for historical comparison only. Do not use the 180 bar figure to evaluate PS-04A."
+  },
+  {
+   "id": "r5",
+   "text": "No calibration interval is specified for PS-04A on this form; recalibration frequency should be confirmed against the applicable maintenance schedule, which is not included in this binder."
+  }
+ ],
+ "claims": [
+  {
+   "region": "r1",
+   "quote": "Calibration Date: 2026-01-09",
+   "entity": "component:PS-04A",
+   "predicate": "last_calibrated",
+   "value": {
+    "type": "date",
+    "v": "2026-01-09"
+   },
+   "critical_tokens": [
+    "2026-01-09"
+   ],
+   "instance": true
+  },
+  {
+   "region": "r1",
+   "quote": "Technician: R. Okafor",
+   "entity": "component:PS-04A",
+   "predicate": "performed_by",
+   "value": {
+    "type": "person",
+    "v": "R. Okafor"
+   },
+   "critical_tokens": [
+    "Okafor"
+   ],
+   "instance": true
+  },
+  {
+   "region": "r3",
+   "quote": "Span reference target is 200 bar",
+   "entity": "component:PS-04A",
+   "predicate": "calibration_reference",
+   "value": {
+    "type": "quantity",
+    "value": 200.0,
+    "unit": "bar"
+   },
+   "critical_tokens": [
+    "200 bar"
+   ],
+   "rev": "ge:3.2"
+  },
+  {
+   "region": "r4",
+   "quote": "Prior sensor (PS-04) span reference target was 180 bar",
+   "entity": "component:PS-04",
+   "predicate": "calibration_reference",
+   "value": {
+    "type": "quantity",
+    "value": 180.0,
+    "unit": "bar"
+   },
+   "critical_tokens": [
+    "PS-04",
+    "180 bar"
+   ],
+   "rev": "lt:3.2"
+  },
+  {
+   "region": "r5",
+   "quote": "No calibration interval is specified for PS-04A on this form",
+   "entity": "component:PS-04A",
+   "predicate": "calibration_interval",
+   "value": {
+    "type": "not_specified"
+   },
+   "critical_tokens": [
+    "PS-04A"
+   ]
+  }
+ ]
+}

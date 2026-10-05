@@ -1,0 +1,50 @@
+{
+ "mode": "plumbing",
+ "llm_stats": {
+  "calls": 0,
+  "note": "plumbing run"
+ },
+ "ingest": {
+  "llm_extract": {
+   "elements_sent": 57,
+   "claims_proposed": 0
+  },
+  "dual_extraction": {
+   "agree": 0,
+   "disagree": 0,
+   "llm_only": 0,
+   "rule_only": 186
+  },
+  "claims": {
+   "ADMITTED": 191,
+   "DEMOTED": 1,
+   "REJECTED": 0
+  }
+ },
+ "official": {
+  "deterministic": {
+   "status_exact": 23,
+   "critical_items": 0,
+   "major_items": 0
+  },
+  "llm": {
+   "status_exact": 23,
+   "critical_items": 0,
+   "major_items": 0
+  },
+  "status_regressions": []
+ },
+ "heldout": {
+  "deterministic": {
+   "status_exact": 24,
+   "critical_items": 0,
+   "major_items": 10
+  },
+  "llm": {
+   "status_exact": 24,
+   "critical_items": 0,
+   "major_items": 10
+  },
+  "status_changes": []
+ }
+}

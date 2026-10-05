@@ -1,0 +1,15 @@
+pydantic>=2.5
+pdfplumber
+openpyxl
+python-docx
+python-pptx
+pint
+rank_bm25
+opencv-python-headless
+pytesseract
+numpy
+tenacity
+anthropic
+fastapi
+uvicorn[standard]
+# system packages: tesseract-ocr, poppler-utils

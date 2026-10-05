@@ -1,0 +1,68 @@
+{
+ "source": "screenshots/screen_03_diagnostics.png",
+ "sha256": "0ba0bb696883f32d4e7b5db5f258b89a70f4d2a3535c7dc0da7450c5394b91f4",
+ "reader": "assistant-transcription (unreviewed; VLM stand-in)",
+ "reviewed": false,
+ "regions": [
+  {
+   "id": "r1",
+   "text": "AEGIS SERIES-7 HCS — DIAGNOSTICS SW REV 3.2"
+  },
+  {
+   "id": "r2",
+   "text": "SENSOR DIAGNOSTICS Tag P.S.04-A Signal Type 4-20 mA Raw Reading 14.8 mA Scaled Value 200.3 bar Calibration Status WITHIN TOLERANCE Last Calibrated 2026-01-09 Firmware Rev. 3.2.1"
+  },
+  {
+   "id": "r3",
+   "text": "Note: this screen displays the sensor tag as printed on the physical unit label."
+  }
+ ],
+ "claims": [
+  {
+   "region": "r2",
+   "quote": "Tag P.S.04-A",
+   "entity": "screen:diagnostics",
+   "entity_name": "Diagnostics screen",
+   "predicate": "displays_tag",
+   "value": {
+    "type": "text",
+    "v": "P.S.04-A"
+   },
+   "critical_tokens": [
+    "P.S.04-A"
+   ],
+   "rev": "eq:3.2",
+   "basis": "instance_observation"
+  },
+  {
+   "region": "r2",
+   "quote": "Signal Type 4-20 mA",
+   "entity": "component:PS-04A",
+   "predicate": "signal_type",
+   "value": {
+    "type": "text",
+    "v": "4-20 mA"
+   },
+   "critical_tokens": [
+    "4-20"
+   ],
+   "rev": "eq:3.2",
+   "basis": "instance_observation"
+  },
+  {
+   "region": "r2",
+   "quote": "Last Calibrated 2026-01-09",
+   "entity": "component:PS-04A",
+   "predicate": "last_calibrated",
+   "value": {
+    "type": "date",
+    "v": "2026-01-09"
+   },
+   "critical_tokens": [
+    "2026-01-09"
+   ],
+   "rev": "eq:3.2",
+   "basis": "instance_observation"
+  }
+ ]
+}

@@ -1,0 +1,16 @@
+services:
+  aegis:
+    build: .
+    env_file: .env
+    environment:
+      AEGIS_DATASET: /dataset          # ingested on first start if the DB does not exist
+    volumes:
+      - ./dataset:/dataset:ro
+      - aegis-data:/app/data
+    ports: ["8000:8000"]
+    read_only: true
+    tmpfs: ["/tmp"]
+    security_opt: ["no-new-privileges:true"]
+    restart: unless-stopped
+volumes:
+  aegis-data:
